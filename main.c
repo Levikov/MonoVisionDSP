@@ -7,11 +7,10 @@
 #include <xdc/runtime/Error.h>
 #include <xdc/runtime/System.h>
 
-#include <ti/sysbios/BIOS.h>
-
-#include <ti/sysbios/knl/Task.h>
-
+#include <ti/imglib/imglib.h>
 #include <ti/vlib/vlib.h>
+#include <ti/sysbios/BIOS.h>
+#include <ti/sysbios/knl/Task.h>
 
 /*
  *  ======== taskFxn ========
@@ -19,11 +18,11 @@
 Void taskFxn(UArg a0, UArg a1)
 {
     System_printf("enter taskFxn()\n");
-
     Task_sleep(10);
 
     System_printf("exit taskFxn()\n");
-
+    IMG_thr_gt2max_8(img,img_out,768,768,128);
+    System_printf("imageprocessed");
     System_flush(); /* force SysMin output to console */
 }
 
@@ -44,5 +43,6 @@ Int main()
         BIOS_exit(0);
     }
     BIOS_start();    /* does not return */
+
     return(0);
 }
