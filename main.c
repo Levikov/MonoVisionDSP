@@ -2,47 +2,50 @@
  *  ======== main.c ========
  */
 
-#include <xdc/std.h>
-
-#include <xdc/runtime/Error.h>
-#include <xdc/runtime/System.h>
+#include <MonoGlobal.h>
 
 #include <ti/imglib/imglib.h>
 #include <ti/vlib/vlib.h>
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 
-/*
- *  ======== taskFxn ========
- */
-Void taskFxn(UArg a0, UArg a1)
-{
-    System_printf("enter taskFxn()\n");
-    Task_sleep(10);
+#ifdef DEBUG
+#include <MonoDebug.h>
+#endif
 
-    System_printf("exit taskFxn()\n");
-    IMG_thr_gt2max_8(img,img_out,768,768,128);
-    System_printf("imageprocessed");
-    System_flush(); /* force SysMin output to console */
-}
+
+//===========Global Variables===========//
+
+
+InputBuffer inputBuffer;
+Frame inputFrames[IMG_BUFFER_SIZE];
+
+Clock_Params clockParams[CORE_NUM];
+Clock_Handle clockHandle[CORE_NUM];
+
+
+
 
 /*
  *  ======== main ========
  */
 Int main()
 { 
-    Task_Handle task;
     Error_Block eb;
-
     System_printf("enter main()\n");
-
     Error_init(&eb);
-    task = Task_create(taskFxn, NULL, &eb);
-    if (task == NULL) {
-        System_printf("Task_create() failed!\n");
-        BIOS_exit(0);
+    switch(DNUM)
+    {
+        case 0:initInputProc();break;
+        case 1:initImgSegProc();break;
+        case 2:initImgSegProc();break;
+        case 3:initImgJudgeProc();break;
+        case 4:initImgJudgeProc();break;
+        case 5:initPoseCalcProc();break;
+        case 6:initPoseCalcProc();break;
+        case 7:initOutputProc();break;
+        default:break;
     }
     BIOS_start();    /* does not return */
-
     return(0);
 }
