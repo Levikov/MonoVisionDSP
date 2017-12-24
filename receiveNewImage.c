@@ -16,4 +16,5 @@ Void taskReceiveNewImage(UArg a0)
         #ifdef DEBUG
         debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;
         #endif
+        Clock_tickStart();
 }

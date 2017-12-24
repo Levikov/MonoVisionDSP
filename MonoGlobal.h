@@ -12,6 +12,11 @@
 
 #include <ti/sysbios/knl/clock.h>
 
+#include <ti/imglib/imglib.h>
+#include <ti/vlib/vlib.h>
+#include <ti/sysbios/BIOS.h>
+#include <ti/sysbios/knl/Task.h>
+
 #define IMG_WIDTH 768
 #define IMG_HEIGHT 768
 #define IMG_SIZE 589824
@@ -56,6 +61,6 @@ extern void initImgSegProc();
 extern void initImgJudgeProc();
 extern void initPoseCalcProc();
 extern void initOutputProc();
-extern void taskReceiveNewImage(UArg a0);
+extern Void taskReceiveNewImage(UArg a0);
 
 #endif

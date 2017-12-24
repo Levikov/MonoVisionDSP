@@ -1,13 +1,7 @@
 /*
  *  ======== main.c ========
  */
-
-#include <MonoGlobal.h>
-
-#include <ti/imglib/imglib.h>
-#include <ti/vlib/vlib.h>
-#include <ti/sysbios/BIOS.h>
-#include <ti/sysbios/knl/Task.h>
+#include "MonoGlobal.h"
 
 #ifdef DEBUG
 #include <MonoDebug.h>
@@ -22,9 +16,6 @@ Frame inputFrames[IMG_BUFFER_SIZE];
 
 Clock_Params clockParams[CORE_NUM];
 Clock_Handle clockHandle[CORE_NUM];
-
-
-
 
 /*
  *  ======== main ========
