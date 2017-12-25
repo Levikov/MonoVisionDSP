@@ -11,7 +11,7 @@
 //===========Global Variables===========//
 
 
-InputBuffer inputBuffer;
+volatile InputBuffer inputBuffer;
 Frame inputFrames[IMG_BUFFER_SIZE];
 
 Clock_Params clockParams[CORE_NUM];

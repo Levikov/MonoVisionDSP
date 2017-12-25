@@ -16,5 +16,5 @@ Void taskReceiveNewImage(UArg a0)
         #ifdef DEBUG
         debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;
         #endif
-        Clock_tickStart();
+        Notify_sendEvent(1,0,123456,&inputBuffer.inputFrames[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,FALSE);
 }

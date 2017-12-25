@@ -11,6 +11,7 @@
 #include <xdc/runtime/Timestamp.h>
 
 #include <ti/sysbios/knl/clock.h>
+#include <ti/sysbios/hal/Cache.h>
 
 #include <ti/imglib/imglib.h>
 #include <ti/vlib/vlib.h>
@@ -29,26 +30,26 @@
 #ifdef DEBUG
 extern float debug_imageReceive_time;
 extern float debug_imageSegment_time;
-extern long long debug_buffer_top;
-extern long long debug_buffer_tail;
+extern unsigned int debug_buffer_top;
+extern unsigned int debug_buffer_tail;
 #endif
 
 //===========Data Structure===========//
 typedef struct
 {
-    unsigned long long FrameId;
+    unsigned int FrameId;
     unsigned char buffer[IMG_SIZE];
 }Frame;
 
 typedef struct
 {
-    unsigned long long headId;
-    unsigned long long tailId;
+    unsigned int headId;
+    unsigned int tailId;
     Frame inputFrames[IMG_BUFFER_SIZE];
 }InputBuffer;
 
 //===========Global Variables===========//
-extern InputBuffer inputBuffer;
+extern volatile InputBuffer inputBuffer;
 extern unsigned char debug_img[];
 
 extern Clock_Params clockParams[CORE_NUM];
@@ -62,5 +63,5 @@ extern void initImgJudgeProc();
 extern void initPoseCalcProc();
 extern void initOutputProc();
 extern Void taskReceiveNewImage(UArg a0);
-
+extern Void taskImageSegment(UArg a0);
 #endif
