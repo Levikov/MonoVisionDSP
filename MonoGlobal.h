@@ -21,6 +21,8 @@
 #define IMG_WIDTH 768
 #define IMG_HEIGHT 768
 #define IMG_SIZE 589824
+#define IMG_THRES 50
+
 #define IMG_BUFFER_SIZE 8
 
 #define CORE_NUM 8
@@ -50,12 +52,23 @@ typedef struct
 typedef struct
 {
     unsigned int headId;
+    unsigned int tailId;    
+    Frame buffer[IMG_BUFFER_SIZE];
+}FrameBuffer;
+
+typedef struct
+{
+    unsigned int headId;
     unsigned int tailId;
-    Frame inputFrames[IMG_BUFFER_SIZE];
-}InputBuffer;
+    Binary buffer[IMG_BUFFER_SIZE];
+}BinaryBuffer;
 
 //===========Global Variables===========//
-extern volatile InputBuffer inputBuffer;
+extern volatile FrameBuffer inputBuffer;
+extern volatile FrameBuffer thresholdBuffer;
+extern volatile BinaryBuffer binaryBuffer;
+extern volatile Frame inputFrames[IMG_BUFFER_SIZE];
+
 extern unsigned char debug_img[];
 
 extern Clock_Params clockParams[CORE_NUM];

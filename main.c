@@ -11,8 +11,12 @@
 //===========Global Variables===========//
 
 
-volatile InputBuffer inputBuffer;
-Frame inputFrames[IMG_BUFFER_SIZE];
+volatile FrameBuffer inputBuffer;
+volatile FrameBuffer thresholdBuffer;
+volatile BinaryBuffer binaryBuffer;
+volatile Frame inputFrames[IMG_BUFFER_SIZE];
+volatile Frame threshHodedFrame[IMG_BUFFER_SIZE];
+volatile Binary threshHodedBinary[IMG_BUFFER_SIZE];
 
 Clock_Params clockParams[CORE_NUM];
 Clock_Handle clockHandle[CORE_NUM];
