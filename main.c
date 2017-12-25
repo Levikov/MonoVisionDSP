@@ -16,6 +16,8 @@ volatile FrameBuffer inputBuffer;
 volatile FrameBuffer thresholdBuffer;
 #pragma DATA_ALIGN ( binaryBuffer , 4 )
 volatile BinaryBuffer binaryBuffer;
+#pragma DATA_ALIGN (CCBuffer,4)
+volatile CCBuffer ccBuffer;
 
 Clock_Params clockParams[CORE_NUM];
 Clock_Handle clockHandle[CORE_NUM];
