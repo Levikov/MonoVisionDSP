@@ -9,8 +9,8 @@ Void taskReceiveNewImage(UArg a0)
         unsigned int t_start = Timestamp_get32();
         #endif
         //Copy debug image into buffer;
-        memcpy(&inputBuffer.inputFrames[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,debug_img,IMG_SIZE);
-        inputBuffer.inputFrames[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
+        memcpy(&inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,debug_img,IMG_SIZE);
+        inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
         inputBuffer.headId++;
         Cache_wb((xdc_Ptr)&inputBuffer.headId,4,Cache_Type_L1D,1);
         Cache_wb((xdc_Ptr)&inputBuffer.headId,4,Cache_Type_L2D,1);
