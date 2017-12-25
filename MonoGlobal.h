@@ -43,6 +43,12 @@ typedef struct
 
 typedef struct
 {
+    unsigned int FrameId;
+    unsigned char buffer[IMG_SIZE/8];
+}Binary;
+
+typedef struct
+{
     unsigned int headId;
     unsigned int tailId;
     Frame inputFrames[IMG_BUFFER_SIZE];
