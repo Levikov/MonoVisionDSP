@@ -9,7 +9,7 @@ Void taskImageSegment(UArg a0)
         #endif
         Cache_inv((xdc_Ptr)&(inputBuffer.headId),4,Cache_Type_ALLD,1);
         Cache_inv((xdc_Ptr)&(thresholdBuffer.tailId),4,Cache_Type_ALLD,1);
-        if(inputBuffer.tailId<inputBuffer.headId-1)
+        if((inputBuffer.headId - inputBuffer.tailId)%IMG_BUFFER_SIZE==4)
         {
 
                 unsigned char *p = (inputBuffer.buffer[inputBuffer.tailId%IMG_BUFFER_SIZE].buffer);
@@ -29,7 +29,5 @@ Void taskImageSegment(UArg a0)
         Cache_wb((xdc_Ptr)&(debug_imageSegment_time),sizeof(float),Cache_Type_L1D,1);
         Cache_wb((xdc_Ptr)&(debug_imageSegment_time),sizeof(float),Cache_Type_L2D,1);
         #endif
-        
-        Clock_tick();
 
 }
