@@ -46,13 +46,13 @@ typedef struct
 typedef struct
 {
     unsigned int FrameId;
-    unsigned char buffer[IMG_SIZE/8];
+    unsigned int buffer[IMG_SIZE/32];
 }Binary;
 
 typedef struct
 {
     unsigned int headId;
-    unsigned int tailId;    
+    unsigned int tailId;
     Frame buffer[IMG_BUFFER_SIZE];
 }FrameBuffer;
 
@@ -67,7 +67,6 @@ typedef struct
 extern volatile FrameBuffer inputBuffer;
 extern volatile FrameBuffer thresholdBuffer;
 extern volatile BinaryBuffer binaryBuffer;
-extern volatile Frame inputFrames[IMG_BUFFER_SIZE];
 
 extern unsigned char debug_img[];
 

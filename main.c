@@ -10,13 +10,12 @@
 
 //===========Global Variables===========//
 
-
+#pragma DATA_ALIGN ( inputBuffer , 4 )
 volatile FrameBuffer inputBuffer;
+#pragma DATA_ALIGN ( thresholdBuffer , 4 )
 volatile FrameBuffer thresholdBuffer;
+#pragma DATA_ALIGN ( binaryBuffer , 4 )
 volatile BinaryBuffer binaryBuffer;
-volatile Frame inputFrames[IMG_BUFFER_SIZE];
-volatile Frame threshHodedFrame[IMG_BUFFER_SIZE];
-volatile Binary threshHodedBinary[IMG_BUFFER_SIZE];
 
 Clock_Params clockParams[CORE_NUM];
 Clock_Handle clockHandle[CORE_NUM];
