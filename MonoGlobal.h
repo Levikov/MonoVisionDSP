@@ -9,8 +9,10 @@
 #include <xdc/runtime/Error.h>
 #include <xdc/runtime/System.h>
 #include <xdc/runtime/Timestamp.h>
+#include <xdc/runtime/Memory.h>
 
 #include <ti/sysbios/knl/clock.h>
+#include <ti/sysbios/gates/GateAll.h>
 #include <ti/sysbios/hal/Cache.h>
 
 #include <ti/imglib/imglib.h>
@@ -50,11 +52,6 @@ typedef struct
     unsigned int buffer[IMG_SIZE/32];
 }Binary;
 
-typedef struct
-{
-    unsigned int FrameId;
-    VLIB_CC buffer;
-}CC;
 
 typedef struct
 {
@@ -74,20 +71,32 @@ typedef struct
 {
     unsigned int headId;
     unsigned int tailId;
-    CC buffer[IMG_BUFFER_SIZE];
+    VLIB_CCHandle* buffer[IMG_BUFFER_SIZE];
 }CCBuffer;
 
+
+typedef struct
+{
+    unsigned int headId;
+    unsigned int tailId;
+    VLIB_blobList buffer[IMG_BUFFER_SIZE];
+}BlobBuffer;
+
+
 //===========Global Variables===========//
-extern volatile FrameBuffer inputBuffer;
-extern volatile FrameBuffer thresholdBuffer;
-extern volatile BinaryBuffer binaryBuffer;
-extern volatile CCBuffer ccBuffer;
+extern  FrameBuffer inputBuffer;
+extern  FrameBuffer thresholdBuffer;
+extern  BinaryBuffer binaryBuffer;
+extern  CCBuffer ccBuffer;
+extern  BlobBuffer blobBuffer;
+extern unsigned char buf[IMG_SIZE];
 
 extern unsigned char debug_img[];
 
 extern Clock_Params clockParams[CORE_NUM];
 extern Clock_Handle clockHandle[CORE_NUM];
 
+extern VLIB_CCHandle *test;
 
 //===========Function Declaration=======//
 extern void initInputProc();
@@ -97,4 +106,8 @@ extern void initPoseCalcProc();
 extern void initOutputProc();
 extern Void taskReceiveNewImage(UArg a0);
 extern Void taskImageSegment(UArg a0);
+extern Void taskThreshold();
+extern Void taskBinarize();
+extern Void taskConnectedComponentAnalysis();
+extern Void taskBlobAnalysis();
 #endif

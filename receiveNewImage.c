@@ -14,52 +14,16 @@ Void taskReceiveNewImage(UArg a0)
         inputBuffer.headId++;
 
         //Threashold
-        unsigned char *p = (inputBuffer.buffer[inputBuffer.tailId%IMG_BUFFER_SIZE].buffer);
-        unsigned char *restrict q = (thresholdBuffer.buffer[thresholdBuffer.headId%IMG_BUFFER_SIZE].buffer);
-        thresholdBuffer.buffer[thresholdBuffer.headId%IMG_BUFFER_SIZE].FrameId = thresholdBuffer.headId;
-        IMG_thr_le2min_8(p,q,IMG_WIDTH,IMG_HEIGHT,IMG_THRES);
-        inputBuffer.tailId++;
-        thresholdBuffer.headId++;
+        taskThreshold();
 
         //Binarize
-        p = (thresholdBuffer.buffer[thresholdBuffer.tailId%IMG_BUFFER_SIZE].buffer);
-        unsigned int *restrict r = (binaryBuffer.buffer[binaryBuffer.headId%IMG_BUFFER_SIZE].buffer);
-        binaryBuffer.buffer[binaryBuffer.headId%IMG_BUFFER_SIZE].FrameId = binaryBuffer.headId;
-        VLIB_packMask32(p,r,IMG_SIZE);
-        DSP_neg32(r,r,IMG_SIZE/32);
-        thresholdBuffer.tailId++;
-        binaryBuffer.headId++;
+        taskBinarize();
 
         //Connected component analysis
-        VLIB_createConnectedComponentsList(
-                &ccBuffer.buffer[ccBuffer.headId%IMG_BUFFER_SIZE].buffer,
-                IMG_WIDTH,IMG_HEIGHT,
-                &binaryBuffer.buffer[binaryBuffer.tailId%IMG_BUFFER_SIZE].buffer,
-                10000,8);
-        unsigned char buf[IMG_SIZE];
-        VLIB_initConnectedComponentsList(&ccBuffer.buffer[ccBuffer.headId%IMG_BUFFER_SIZE].buffer,
-                (void *)buf,IMG_SIZE);
-        
+        taskConnectedComponentAnalysis();
 
-        
-
-
-
-        ccBuffer.buffer[ccBuffer.headId%IMG_BUFFER_SIZE].FrameId = ccBuffer.headId;
-        binaryBuffer.tailId++;
-        ccBuffer.headId++;
-
-
-
-
-
-
-
-
-
-
-
-
+        //Blob Analysis
+        taskBlobAnalysis();
 
         #ifdef DEBUG
         debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;

@@ -10,14 +10,20 @@
 
 //===========Global Variables===========//
 
-#pragma DATA_ALIGN ( inputBuffer , 4 )
-volatile FrameBuffer inputBuffer;
-#pragma DATA_ALIGN ( thresholdBuffer , 4 )
-volatile FrameBuffer thresholdBuffer;
-#pragma DATA_ALIGN ( binaryBuffer , 4 )
-volatile BinaryBuffer binaryBuffer;
-#pragma DATA_ALIGN (CCBuffer,4)
-volatile CCBuffer ccBuffer;
+#pragma DATA_ALIGN (inputBuffer,8)
+ FrameBuffer inputBuffer;
+#pragma DATA_ALIGN (thresholdBuffer,8)
+ FrameBuffer thresholdBuffer;
+#pragma DATA_ALIGN (binaryBuffer,8)
+ BinaryBuffer binaryBuffer;
+#pragma DATA_ALIGN (ccBuffer,8)
+ CCBuffer ccBuffer;
+#pragma DATA_ALIGN(blobBuffer,8)
+BlobBuffer blobBuffer;
+
+unsigned char buf[IMG_SIZE];
+
+VLIB_CCHandle *test;
 
 Clock_Params clockParams[CORE_NUM];
 Clock_Handle clockHandle[CORE_NUM];
@@ -30,6 +36,7 @@ Int main()
     Error_Block eb;
     System_printf("enter main()\n");
     Error_init(&eb);
+    char *p = malloc(100);
     switch(DNUM)
     {
         case 0:initInputProc();break;
