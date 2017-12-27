@@ -11,6 +11,3 @@ void initInputProc()
     clockHandle[DNUM] = Clock_create(taskReceiveNewImage,1,&clockParams[DNUM],&eb);
     Clock_start(clockHandle[DNUM]);
 }
-
-
-
