@@ -13,7 +13,7 @@ Void taskReceiveNewImage(UArg a0)
         inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
         inputBuffer.headId++;
 
-        //Threashold
+        //Threshold
         taskThreshold();
 
         //Binarize

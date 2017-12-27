@@ -21,9 +21,8 @@
 #pragma DATA_ALIGN(blobBuffer,8)
 BlobBuffer blobBuffer;
 
-unsigned char buf[IMG_SIZE];
 
-VLIB_CCHandle *test;
+void *buffer_CC;
 
 Clock_Params clockParams[CORE_NUM];
 Clock_Handle clockHandle[CORE_NUM];
@@ -36,7 +35,7 @@ Int main()
     Error_Block eb;
     System_printf("enter main()\n");
     Error_init(&eb);
-    char *p = malloc(100);
+    buffer_CC = malloc(19170404);
     switch(DNUM)
     {
         case 0:initInputProc();break;

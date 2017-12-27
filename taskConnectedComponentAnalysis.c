@@ -2,27 +2,15 @@
 
 void taskConnectedComponentAnalysis()
 {
-        unsigned int gateKey;
-        GateAll_Handle gateAll;
-        GateAll_Params prms;
-        Error_Block eb;
-        Error_init(&eb);
-        GateAll_Params_init(&prms);
-        gateAll = GateAll_create(&prms,&eb);
-        gateKey = GateAll_enter(gateAll);
+        int status;
 
-    int status =VLIB_createConnectedComponentsList(
-                test,
-                IMG_WIDTH,IMG_HEIGHT,
-                binaryBuffer.buffer[binaryBuffer.tailId%IMG_BUFFER_SIZE].buffer,
-                900,1);
-        GateAll_leave(gateAll,gateKey);
-
-        VLIB_initConnectedComponentsList(test,
-                (void *)buf,IMG_SIZE);
-
-        ccBuffer.buffer[ccBuffer.headId] = test;
+        status = VLIB_initConnectedComponentsList(&ccBuffer.buffer[ccBuffer.headId],buffer_CC, 19170404);
+        
+        status = VLIB_createConnectedComponentsList(
+                &ccBuffer.buffer[ccBuffer.headId],
+                IMG_WIDTH, IMG_HEIGHT,
+                (unsigned int *)binaryBuffer.buffer[binaryBuffer.tailId % IMG_BUFFER_SIZE].buffer,
+        900, 1);
         binaryBuffer.tailId++;
         ccBuffer.headId++;
-        System_printf("CC buffer head id = %d\n",ccBuffer.headId);
 }

@@ -71,9 +71,15 @@ typedef struct
 {
     unsigned int headId;
     unsigned int tailId;
-    VLIB_CCHandle* buffer[IMG_BUFFER_SIZE];
+    VLIB_CCHandle buffer[IMG_BUFFER_SIZE];
 }CCBuffer;
 
+typedef struct
+{
+    unsigned int headId;
+    unsigned int tailId;
+    VLIB_CCHandle *buffer[IMG_BUFFER_SIZE];
+}CCHandleBuffer;
 
 typedef struct
 {
@@ -89,14 +95,12 @@ extern  FrameBuffer thresholdBuffer;
 extern  BinaryBuffer binaryBuffer;
 extern  CCBuffer ccBuffer;
 extern  BlobBuffer blobBuffer;
-extern unsigned char buf[IMG_SIZE];
+extern void *buffer_CC;
 
 extern unsigned char debug_img[];
 
 extern Clock_Params clockParams[CORE_NUM];
 extern Clock_Handle clockHandle[CORE_NUM];
-
-extern VLIB_CCHandle *test;
 
 //===========Function Declaration=======//
 extern void initInputProc();
