@@ -36,6 +36,7 @@ Void taskBlobAnalysis()
         ratio =(float)(perimeter*perimeter)/cc.area;
         pPoints[i].X = (float)cc.xsum/cc.area;
         pPoints[i].Y = (float)cc.ysum/cc.area;
+        pPoints[i].Z = 1;
     }
     float *varX = malloc(n*n*sizeof(float));
     float *varY = malloc(n*n*sizeof(float));
