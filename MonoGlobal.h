@@ -131,4 +131,5 @@ extern Void taskThreshold();
 extern Void taskBinarize();
 extern Void taskConnectedComponentAnalysis();
 extern Void taskBlobAnalysis();
+extern Void taskPoseCalc();
 #endif
