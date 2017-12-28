@@ -21,6 +21,8 @@
 #pragma DATA_ALIGN(blobBuffer,8)
 BlobBuffer blobBuffer;
 
+PosBuffer posBuffer;
+
 
 void *buffer_CC;
 

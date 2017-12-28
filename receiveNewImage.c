@@ -3,30 +3,33 @@
 
 Void taskReceiveNewImage(UArg a0)
 {
-        //Cache_inv((xdc_Ptr)&inputBuffer,sizeof(inputBuffer),Cache_Type_ALL,1);
-        #ifdef DEBUG
-        //log processing time
-        unsigned int t_start = Timestamp_get32();
-        #endif
-        //Copy debug image into buffer;
-        memcpy(&inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,debug_img,IMG_SIZE);
-        inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
-        inputBuffer.headId++;
+        while(TRUE)
+        {
+                //Cache_inv((xdc_Ptr)&inputBuffer,sizeof(inputBuffer),Cache_Type_ALL,1);
+                #ifdef DEBUG
+                //log processing time
+                unsigned int t_start = Timestamp_get32();
+                #endif
+                //Copy debug image into buffer;
+                memcpy(&inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,debug_img,IMG_SIZE);
+                inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
+                inputBuffer.headId++;
 
-        //Threshold
-        taskThreshold();
+                //Threshold
+                taskThreshold();
 
-        //Binarize
-        taskBinarize();
+                //Binarize
+                taskBinarize();
 
-        //Connected component analysis
-        taskConnectedComponentAnalysis();
+                //Connected component analysis
+                taskConnectedComponentAnalysis();
 
-        //Blob Analysis
-        taskBlobAnalysis();
+                //Blob Analysis
+                taskBlobAnalysis();
 
-        #ifdef DEBUG
-        debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;
-        #endif
-        //Cache_wbAll();
+                #ifdef DEBUG
+                debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;
+                #endif
+                //Cache_wbAll();
+        }
 }

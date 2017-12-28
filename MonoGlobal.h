@@ -18,6 +18,7 @@
 #include <ti/imglib/imglib.h>
 #include <ti/vlib/vlib.h>
 #include <ti/dsplib/dsplib.h>
+#include <ti/mathlib/mathlib.h>
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 
@@ -27,6 +28,8 @@
 #define IMG_THRES 20
 
 #define IMG_BUFFER_SIZE 8
+
+#define TARGET_NUM 4
 
 #define CORE_NUM 8
 #define CLOCK_TICK_TIMEOUT 250000
@@ -40,6 +43,13 @@ extern unsigned int debug_buffer_tail;
 #endif
 
 //===========Data Structure===========//
+typedef struct
+{
+    float X;
+    float Y;
+    float Z;
+}Coord;
+
 typedef struct
 {
     unsigned int FrameId;
@@ -88,6 +98,12 @@ typedef struct
     VLIB_blobList buffer[IMG_BUFFER_SIZE];
 }BlobBuffer;
 
+typedef struct
+{
+    unsigned int headId;
+    unsigned int tailId;
+    Coord buffer[4];
+}PosBuffer;
 
 //===========Global Variables===========//
 extern  FrameBuffer inputBuffer;
@@ -95,6 +111,7 @@ extern  FrameBuffer thresholdBuffer;
 extern  BinaryBuffer binaryBuffer;
 extern  CCBuffer ccBuffer;
 extern  BlobBuffer blobBuffer;
+extern  PosBuffer posBuffer;
 extern void *buffer_CC;
 
 extern unsigned char debug_img[];
