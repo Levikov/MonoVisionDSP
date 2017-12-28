@@ -27,6 +27,9 @@ Void taskReceiveNewImage(UArg a0)
                 //Blob Analysis
                 taskBlobAnalysis();
 
+                //Pose Calculation
+                taskPoseCalc();
+
                 #ifdef DEBUG
                 debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;
                 #endif
