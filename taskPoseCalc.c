@@ -51,6 +51,11 @@ Void taskPoseCalc()
   DSPF_sp_mat_mul(V, 4, 4, invDtransU, 4, invX);
   DSPF_sp_mat_mul(Y, 4, 4, invX, 4, H);
 
+  Memory_free(NULL,U, 16 * sizeof(float));
+  Memory_free(NULL,V,16 * sizeof(float));
+  Memory_free(NULL,U1,16 * sizeof(float));
+  Memory_free(NULL, diag,4 * sizeof(float));
+  Memory_free(NULL,superdiag, 4 * sizeof(float));
   //Optimiztion
 
 }

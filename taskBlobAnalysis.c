@@ -16,22 +16,24 @@ Void taskBlobAnalysis()
     unsigned int size;
     unsigned int cnt;
     int status;
-    status = VLIB_getNumCCs(&ccBuffer.buffer[ccBuffer.tailId],&cnt);
-    blobBuffer.buffer[blobBuffer.headId].blobList = malloc(cnt*sizeof(VLIB_blob));
-    status = VLIB_createBlobList(&ccBuffer.buffer[ccBuffer.tailId],&(blobBuffer.buffer[blobBuffer.headId]));
-    status = VLIB_getblobIIBufSize(IMG_HEIGHT,blobBuffer.buffer[blobBuffer.headId].maxNumItervals,&size);
+    status = VLIB_getNumCCs(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&cnt);
+    if(blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList!=0x00000000);
+    free(blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList);
+    blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList = malloc(cnt*sizeof(VLIB_blob));
+    status = VLIB_createBlobList(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&(blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE]));
+    status = VLIB_getblobIIBufSize(IMG_HEIGHT,blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].maxNumItervals,&size);
     unsigned char *pBuf = malloc(size);
     unsigned char *pBufCCMap = malloc(IMG_WIDTH*IMG_HEIGHT);
-    status = VLIB_createCCMap8Bit(&ccBuffer.buffer[ccBuffer.tailId],pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
+    status = VLIB_createCCMap8Bit(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
     float ratio;
-    int n = blobBuffer.buffer[blobBuffer.headId].numBlobs;
+    int n = blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].numBlobs;
     Coord *pPoints = malloc(n*sizeof(Coord));
-    for(i=0;i<blobBuffer.buffer[blobBuffer.headId].numBlobs;i++)
+    for(i=0;i<blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].numBlobs;i++)
     {
-        status = VLIB_createBlobIntervalImg(&ccBuffer.buffer[ccBuffer.tailId],(AVMii *)pBuf,&blobBuffer.buffer[blobBuffer.headId].blobList[i]);
+        status = VLIB_createBlobIntervalImg(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],(AVMii *)pBuf,&blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList[i]);
         VLIB_CC cc;
-        status = VLIB_getCCFeatures(&ccBuffer.buffer[ccBuffer.tailId],&cc,i);
+        status = VLIB_getCCFeatures(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&cc,i);
         status = VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,pBuf,pBufCCMap,&perimeter);
         ratio =(float)(perimeter*perimeter)/cc.area;
         pPoints[i].X = (float)cc.xsum/cc.area;
@@ -92,5 +94,6 @@ Void taskBlobAnalysis()
     free(dist);
     free(pBuf);
     free(pBufCCMap);
+    free(pPoints);
     
 }
