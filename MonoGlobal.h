@@ -52,6 +52,13 @@ typedef struct
 
 typedef struct
 {
+    float alpha;
+    float beta;
+    float gamma;
+}Angle;
+
+typedef struct
+{
     unsigned int FrameId;
     unsigned char buffer[IMG_SIZE];
 }Frame;
@@ -104,6 +111,13 @@ typedef struct
     unsigned int tailId;
     Coord buffer[4];
 }PosBuffer;
+
+typedef struct
+{
+    Angle R;
+    Coord T;
+}Pose;
+
 
 //===========Global Variables===========//
 extern  FrameBuffer inputBuffer;
