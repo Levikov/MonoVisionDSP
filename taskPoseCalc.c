@@ -1,8 +1,15 @@
 #include <MonoGlobal.h>
 //Camera Calibration Matrix
-float M[3][3] = {2294.35, 0, 1172.41,
-                 0, 2310.24, 885.828,
-                 0, 0, 1};
+#pragma DATA_ALIGN(M, 8)
+float M[4][4] = {2294.35, 0, 1172.41, 0,
+                 0, 2310.24, 885.828, 0,
+                 0, 0,  1,  0,
+                 0, 0,  0,  0};
+#pragma DATA_ALIGN(invM, 8)
+float invM[4][4] = {4.358532917819862e-04, 0, -0.510998757818118, 0,
+                 0, 4.328554609044948e-04, -0.383435487222107, 0,
+                 0, 0,  1,  0,
+                 0, 0,  0,  0};
 
 //Target Location Matrix
 #pragma DATA_ALIGN(X, 8)
@@ -97,6 +104,17 @@ Void taskPoseCalc()
   DSPF_sp_mat_mul(V, 4, 4, invDtransU, 4, invX);
   DSPF_sp_mat_mul(Y, 4, 4, invX, 4, H);
 
+  float (*R)[4][4] = Memory_alloc(NULL,sizeof(float)*16,8,NULL);
+  float (*transR)[4][4] = Memory_alloc(NULL,sizeof(float)*16,8,NULL);
+  float C_r2[3] = {0};
+
+  DSPF_sp_mat_mul(invM,4,4,H,4,R);
+  DSPF_sp_mat_trans(R,4,4,transR);
+  float Zc1,Zc2,Zc;
+  Zc1 = VLIB_L2_norm_f32(transR[0],3);
+  Zc2 = VLIB_L2_norm_f32(transR[1],3);
+  Zc = Sqrt(Zc1*Zc2);
+  
   //Optimiztion
 
   short(*Hopt)[9] = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
