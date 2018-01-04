@@ -59,57 +59,57 @@ typedef struct
 
 typedef struct
 {
-    unsigned int FrameId;
     unsigned char buffer[IMG_SIZE];
+    unsigned int FrameId;
 }Frame;
 
 typedef struct
 {
-    unsigned int FrameId;
     unsigned int buffer[IMG_SIZE/32];
+    unsigned int FrameId;
 }Binary;
 
 
 typedef struct
 {
+    Frame buffer[IMG_BUFFER_SIZE];
     unsigned int headId;
     unsigned int tailId;
-    Frame buffer[IMG_BUFFER_SIZE];
 }FrameBuffer;
 
 typedef struct
 {
+    Binary buffer[IMG_BUFFER_SIZE];
     unsigned int headId;
     unsigned int tailId;
-    Binary buffer[IMG_BUFFER_SIZE];
 }BinaryBuffer;
 
 typedef struct
 {
+    VLIB_CCHandle buffer[IMG_BUFFER_SIZE];
     unsigned int headId;
     unsigned int tailId;
-    VLIB_CCHandle buffer[IMG_BUFFER_SIZE];
 }CCBuffer;
 
 typedef struct
 {
+    VLIB_CCHandle *buffer[IMG_BUFFER_SIZE];
     unsigned int headId;
     unsigned int tailId;
-    VLIB_CCHandle *buffer[IMG_BUFFER_SIZE];
 }CCHandleBuffer;
 
 typedef struct
 {
+    VLIB_blobList buffer[IMG_BUFFER_SIZE];
     unsigned int headId;
     unsigned int tailId;
-    VLIB_blobList buffer[IMG_BUFFER_SIZE];
 }BlobBuffer;
 
 typedef struct
 {
+    Coord buffer[4];
     unsigned int headId;
     unsigned int tailId;
-    Coord buffer[4];
 }PosBuffer;
 
 typedef struct
