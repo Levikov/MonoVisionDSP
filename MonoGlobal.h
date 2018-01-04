@@ -48,6 +48,7 @@ typedef struct
     float X;
     float Y;
     float Z;
+    float ratio;
 }Coord;
 
 typedef struct

@@ -26,7 +26,6 @@ Void taskBlobAnalysis()
     unsigned char *pBufCCMap = Memory_alloc(NULL,IMG_SIZE,8,NULL);
     status = VLIB_createCCMap8Bit(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
-    float ratio;
     int n = blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].numBlobs;
     Coord *pPoints = malloc(n*sizeof(Coord));
     for(i=0;i<blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].numBlobs;i++)
@@ -35,7 +34,7 @@ Void taskBlobAnalysis()
         VLIB_CC cc;
         status = VLIB_getCCFeatures(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&cc,i);
         status = VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,pBuf,pBufCCMap,&perimeter);
-        ratio =(float)(perimeter*perimeter)/cc.area;
+        pPoints[i].ratio =(float)(perimeter*perimeter)/cc.area;
         pPoints[i].X = (float)cc.xsum/cc.area;
         pPoints[i].Y = (float)cc.ysum/cc.area;
         pPoints[i].Z = 1;
