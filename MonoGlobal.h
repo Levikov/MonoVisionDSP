@@ -130,6 +130,7 @@ extern  CCBuffer ccBuffer;
 extern  BlobBuffer blobBuffer;
 extern  PosBuffer posBuffer;
 extern void *buffer_CC;
+extern Pose pose;
 
 extern unsigned char debug_img[];
 

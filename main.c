@@ -23,6 +23,7 @@ BlobBuffer blobBuffer;
 
 PosBuffer posBuffer;
 
+Pose pose;
 
 void *buffer_CC;
 
