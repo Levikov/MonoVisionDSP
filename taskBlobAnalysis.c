@@ -64,7 +64,7 @@ Void taskBlobAnalysis()
             else
             {
                 float product = (varX[j*n+i]*varX[k*n+j]+varY[j*n+i]*varY[k*n+j])/dist[j*n+i]/dist[k*n+j];
-                if(product>0.95)
+                if(product>0.98)
                 {
                     float rate = dist[k*n+j]/dist[j*n+i];
                     if(rate>1.0 && rate<1.4)
