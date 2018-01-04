@@ -104,63 +104,9 @@ Void taskPoseCalc()
   DSPF_sp_mat_mul(V, 4, 4, invDtransU, 4, invX);
   DSPF_sp_mat_mul(Y, 4, 4, invX, 4, H);
 
-  float (*R)[4][4] = Memory_alloc(NULL,sizeof(float)*16,8,NULL);
-  float (*transR)[4][4] = Memory_alloc(NULL,sizeof(float)*16,8,NULL);
-  float C_r2[3] = {0};
-
-  DSPF_sp_mat_mul(invM,4,4,H,4,R);
-  DSPF_sp_mat_trans(R,4,4,transR);
-  float Zc1,Zc2,Zc;
-  Zc1 = VLIB_L2_norm_f32(transR[0],3);
-  Zc2 = VLIB_L2_norm_f32(transR[1],3);
-  Zc = Sqrt(Zc1*Zc2);
-  
-  //Optimiztion
-
-  short(*Hopt)[9] = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
-  short(*initStep)[9] = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
-  SimplexParams *simplexParams = Memory_alloc(NULL, sizeof(SimplexParams), 8, NULL);
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
-    {
-      if (H[i][j] < 0)
-      {
-        simplexParams->ratio[3 * i + j] = 1.2 * H[i][j] / 32767;
-      }
-      else
-      {
-        simplexParams->ratio[3 * i + j] = -1.2 * H[i][j] / 32767;
-      }
-      (*Hopt)[3 * i + j] = H[i][j] / simplexParams->ratio[3 * i + j];
-      (*initStep)[3*i+j] = 10;
-    }
-  simplexParams->X = X;
-  simplexParams->Y = Y;
-
-  //Allocate memory for simplex
-  short *v = Memory_alloc(NULL, sizeof(short) * 90, 8, NULL);
-  short *f = Memory_alloc(NULL, sizeof(short) * 10, 8, NULL);
-  short *vr = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
-  short *ve = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
-  short *vc = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
-  short *vm = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
-  int min;
-  short(*Hout)[9] = Memory_alloc(NULL, sizeof(short) * 9, 8, NULL);
-  VLIB_simplex(simon_h, Hopt, initStep, 3, 1 / 3, 1000, 1000, v, f, vr, ve, vc, vm, simplexParams, &min,&Hout);
-
   Memory_free(NULL, U, 16 * sizeof(float));
   Memory_free(NULL, V, 16 * sizeof(float));
   Memory_free(NULL, U1, 16 * sizeof(float));
   Memory_free(NULL, diag, 4 * sizeof(float));
   Memory_free(NULL, superdiag, 4 * sizeof(float));
-  Memory_free(NULL, v, sizeof(short) * 90);
-  Memory_free(NULL, f, sizeof(short) * 10);
-  Memory_free(NULL, vr, sizeof(short) * 9);
-  Memory_free(NULL, ve, sizeof(short) * 9);
-  Memory_free(NULL, vc, sizeof(short) * 9);
-  Memory_free(NULL, vm, sizeof(short) * 9);
-  Memory_free(NULL, Hout, sizeof(short) * 9);
-  Memory_free(NULL, Hopt, sizeof(short) * 9);
-  Memory_free(NULL, initStep, sizeof(short) * 9);
-  Memory_free(NULL, simplexParams, sizeof(SimplexParams));
 }
