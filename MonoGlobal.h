@@ -22,6 +22,8 @@
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 
+#define PI 3.14159265358979323846
+
 #define IMG_WIDTH 1280
 #define IMG_HEIGHT 1280
 #define IMG_SIZE 1638400
