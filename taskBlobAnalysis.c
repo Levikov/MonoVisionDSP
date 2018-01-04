@@ -80,6 +80,24 @@ Void taskBlobAnalysis()
     swap(pPoints,pPoints+i-1);
     swap(pPoints+1,pPoints+j-1);
     swap(pPoints+2,pPoints+k-1);
+
+    int l=0;
+    float mean = (pPoints[0].ratio+pPoints[1].ratio+pPoints[2].ratio)/3;
+    float var = sqrtsp(((pPoints[0].ratio-mean)*(pPoints[0].ratio-mean)+(pPoints[1].ratio-mean)*(pPoints[1].ratio-mean)+(pPoints[2].ratio-mean)*(pPoints[2].ratio-mean))/3);
+    float min = 3*var;
+    for(l=0;l<n;l++)
+    {
+        if(l==0||l==1||l==2)continue;
+        else
+        {
+            if(abs(pPoints[l].ratio-mean)<min)
+            {
+                swap(pPoints+3,pPoints+l);
+            }
+        }
+        
+    }
+
     memcpy(posBuffer.buffer,pPoints,TARGET_NUM*sizeof(Coord));
     
 
