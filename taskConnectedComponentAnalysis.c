@@ -3,8 +3,10 @@
 void taskConnectedComponentAnalysis()
 {
         int status;
-
-        status = VLIB_initConnectedComponentsList(&ccBuffer.buffer[ccBuffer.headId%IMG_BUFFER_SIZE],buffer_CC, 19170404);
+        int size;
+        status = VLIB_calcConnectedComponentsMaxBufferSize(IMG_WIDTH,IMG_HEIGHT,900,&size); 
+        buffer_CC = Memory_alloc(NULL,size,8,NULL);
+        status = VLIB_initConnectedComponentsList(&ccBuffer.buffer[ccBuffer.headId%IMG_BUFFER_SIZE],buffer_CC, size);
         
         status = VLIB_createConnectedComponentsList(
                 &ccBuffer.buffer[ccBuffer.headId%IMG_BUFFER_SIZE],

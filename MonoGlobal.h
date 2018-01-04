@@ -22,9 +22,9 @@
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 
-#define IMG_WIDTH 768
-#define IMG_HEIGHT 768
-#define IMG_SIZE 589824
+#define IMG_WIDTH 1280
+#define IMG_HEIGHT 1280
+#define IMG_SIZE 1638400
 #define IMG_THRES 20
 
 #define IMG_BUFFER_SIZE 8
