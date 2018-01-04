@@ -22,8 +22,8 @@ Void taskBlobAnalysis()
     blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList = malloc(cnt*sizeof(VLIB_blob));
     status = VLIB_createBlobList(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&(blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE]));
     status = VLIB_getblobIIBufSize(IMG_HEIGHT,blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].maxNumItervals,&size);
-    unsigned char *pBuf = malloc(size);
-    unsigned char *pBufCCMap = malloc(IMG_WIDTH*IMG_HEIGHT);
+    unsigned char *pBuf = Memory_alloc(NULL,size,8,NULL);
+    unsigned char *pBufCCMap = Memory_alloc(NULL,IMG_SIZE,8,NULL);
     status = VLIB_createCCMap8Bit(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
     float ratio;
@@ -92,8 +92,8 @@ Void taskBlobAnalysis()
     free(varX);
     free(varY);
     free(dist);
-    free(pBuf);
-    free(pBufCCMap);
+    Memory_free(NULL,pBuf,size);
+    Memory_free(NULL,pBufCCMap,IMG_SIZE);
     free(pPoints);
     
 }

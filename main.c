@@ -37,7 +37,6 @@ Int main()
     Error_Block eb;
     System_printf("enter main()\n");
     Error_init(&eb);
-    buffer_CC = malloc(19170404);
     switch(DNUM)
     {
         case 0:initInputProc();break;
