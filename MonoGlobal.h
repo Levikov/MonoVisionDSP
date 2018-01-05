@@ -53,11 +53,18 @@ typedef struct
     float ratio;
 }Coord;
 
+//==========Rotation Angle==========//
+
+//1. Rotate roll degrees about Z axis;
+//2. Rotate yaw degrees about Y axis;
+//3. Rotate pitch degrees about X axis;
+
+//==================================//
 typedef struct
 {
-    float alpha;
-    float beta;
-    float gamma;
+    float roll;
+    float yaw;
+    float pitch;
 }Angle;
 
 typedef struct
