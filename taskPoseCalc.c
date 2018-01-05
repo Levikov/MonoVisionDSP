@@ -29,7 +29,7 @@ typedef struct
 
 int simon_h(short a[], const void *params)
 {
-  SimplexParams *p = params;
+  SimplexParams *p = (SimplexParams*)params;
   int i = 0, j = 0;
   float(*H)[4][4] = Memory_alloc(NULL, sizeof(float) * 16, 8, NULL);
   float(*Yhap)[4][4] = Memory_alloc(NULL, sizeof(float) * 16, 8, NULL);
@@ -41,7 +41,7 @@ int simon_h(short a[], const void *params)
       (*H)[i][j] = a[i * 3 + j] * p->ratio[i * 3 + j];
     }
 
-  DSPF_sp_mat_mul(H, 4, 4, p->X, 4, Yhap);
+  DSPF_sp_mat_mul((float *)H, 4, 4, (float *)p->X, 4, (float *)Yhap);
 
   for (i = 0; i < 3; i++)
     for (j = 0; j < 3; j++)
@@ -89,7 +89,7 @@ Void taskPoseCalc()
   float invDtransU[4][4] = {0};
 
   //Calculate SVD
-  DSPF_sp_svd(3, 4, X, U, V, U1, diag, superdiag);
+  DSPF_sp_svd(3, 4, (float *)X, (float *)U, (float *)V, (float *)U1, (float *)diag, (float *)superdiag);
   for (i = 0; i < 3; i++)
     invD[i][i] = 1 / (*diag)[i];
 
@@ -100,9 +100,9 @@ Void taskPoseCalc()
     {
       transU[i][j] = (*U)[j][i];
     }
-  DSPF_sp_mat_mul(invD, 4, 4, transU, 4, invDtransU);
-  DSPF_sp_mat_mul(V, 4, 4, invDtransU, 4, invX);
-  DSPF_sp_mat_mul(Y, 4, 4, invX, 4, H);
+  DSPF_sp_mat_mul((float *)invD, 4, 4, (float *)transU, 4, (float *)invDtransU);
+  DSPF_sp_mat_mul((float *)V, 4, 4, (float *)invDtransU, 4, (float *)invX);
+  DSPF_sp_mat_mul((float *)Y, 4, 4, (float *)invX, 4, (float *)H);
 
   Memory_free(NULL, U, 16 * sizeof(float));
   Memory_free(NULL, V, 16 * sizeof(float));
