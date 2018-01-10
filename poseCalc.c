@@ -68,8 +68,8 @@ void DSPF_sp_crossMat(float *restrict x,float (* restrict y)[3][3])
  */
 void solveQuarticEquation(float (* restrict IJphap)[4][2],float *restrict lambda,float *restrict miu)
 {
-  float x0,y0,a,b,c,d,e,g,A,B,C,delta;
-  float err[2];
+  double x0,y0,a,b,c,d,e,g,A,B,C,delta;
+  double err[2];
   x0 = (*IJphap)[3][0];
   y0 = (*IJphap)[3][1];
   a = x0*y0/(1+x0*x0);
@@ -84,7 +84,7 @@ void solveQuarticEquation(float (* restrict IJphap)[4][2],float *restrict lambda
   C = a*a*d*d + c*c - 2*a*c*d;
 
   delta = B*B - 4*A*C;
-  lambda[0] = a>0?(-b+sqrtsp(delta))/(2*a):(-b-sqrtsp(delta))/(2*a);
+  lambda[0] = A>0?sqrtdp((-B+sqrtdp(delta))/(2*A)):sqrtdp((-B-sqrtdp(delta))/(2*A));
   lambda[1] = - lambda[0];
 
   A = b*b - 1/g;
@@ -92,11 +92,11 @@ void solveQuarticEquation(float (* restrict IJphap)[4][2],float *restrict lambda
   C = b*b*e*e + c*c - 2*b*c*e;
 
   delta = B*B - 4*A*C;
-  miu[0] = a>0?(-b+sqrtsp(delta))/(2*a):(-b-sqrtsp(delta))/(2*a);
+  miu[0] = A>0?sqrtdp((-B+sqrtdp(delta))/(2*A)):sqrtdp((-B-sqrtdp(delta))/(2*A));
   miu[1] = - miu[0];
 
-  err[0] = abs(c+lambda[0]*miu[0]-a*(d*+2*lambda[0]*lambda[0])) + abs(c+lambda[0]*miu[0]-b*(e*+2*miu[0]*miu[0])); 
-  err[1] = abs(c+lambda[0]*miu[1]-a*(d*+2*lambda[0]*lambda[0])) + abs(c+lambda[0]*miu[1]-b*(e*+2*miu[0]*miu[0])); 
+  err[0] = fabs(c+lambda[0]*miu[0]-a*(d*+2*lambda[0]*lambda[0])) + abs(c+lambda[0]*miu[0]-b*(e*+2*miu[0]*miu[0])); 
+  err[1] = fabs(c+lambda[0]*miu[1]-a*(d*+2*lambda[0]*lambda[0])) + abs(c+lambda[0]*miu[1]-b*(e*+2*miu[0]*miu[0])); 
 
   if(err[0]>err[1])
   {
