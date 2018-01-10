@@ -23,6 +23,22 @@ float H[4][4] = {-0.004817275747508,-3.322259136212628e-04,0.005149501661130,1.3
 #pragma DATA_ALIGN(Y, 8)
 float Y[4][4] = {0};
 
+/**
+ * @brief 
+ * Convert image coordinates to focus unified coordinate.
+ * @param p[IN/OUT]  3 x TARGET_NUM matrix of image coordinates
+ * @param M[IN] 3 x 3 camera calibration matrix
+ */
+void unifyImageCoord(float (* restrict p)[3][TARGET_NUM],float (* restrict M)[3][3])
+{
+  int i=0;
+  for(i=0;i<TARGET_NUM;i++)
+  {
+    (*p)[0][i] = ((*p)[0][i] - (*M)[0][2])/(*M)[0][0];
+    (*p)[1][i] = ((*p)[1][i] - (*M)[1][2])/(*M)[1][1];
+    (*p)[2][i] = 1;
+  }
+}
 
 /**
  * @brief 
