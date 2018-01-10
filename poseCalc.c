@@ -23,12 +23,6 @@ float H[4][4] = {-0.004817275747508,-3.322259136212628e-04,0.005149501661130,1.3
 #pragma DATA_ALIGN(Y, 8)
 float Y[4][4] = {0};
 
-typedef struct
-{
-  double ratio[9];
-  float (*X)[4][4];
-  float (*Y)[4][4];
-} SimplexParams;
 
 /**
  * @brief 
