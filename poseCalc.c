@@ -36,6 +36,25 @@ typedef struct
   float (*Y)[4][4];
 } SimplexParams;
 
+/**
+ * @brief 
+ * Construct cross matrix from vector
+ * @param x[IN]  pointer to 3x1 vector
+ * @param y[OUT] pointer to 3x3 matrix
+ */
+void DSPF_sp_crossMat(float *restrict x,float (* restrict y)[3][3])
+{
+  (*y)[0][0] = 0;
+  (*y)[0][1] = -x[2];
+  (*y)[0][2] = x[1];
+  (*y)[1][0] = x[2];
+  (*y)[1][1] = 0;
+  (*y)[1][2] = -x[0];
+  (*y)[2][0] = -x[1];
+  (*y)[2][1] = x[0];
+  (*y)[2][2] = 0;
+}
+
 Void taskPoseCalc()
 {
   
