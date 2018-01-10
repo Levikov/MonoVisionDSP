@@ -27,42 +27,6 @@ typedef struct
   float (*Y)[4][4];
 } SimplexParams;
 
-int simon_h(short a[], const void *params)
-{
-  SimplexParams *p = (SimplexParams*)params;
-  int i = 0, j = 0;
-  float(*H)[4][4] = Memory_alloc(NULL, sizeof(float) * 16, 8, NULL);
-  float(*Yhap)[4][4] = Memory_alloc(NULL, sizeof(float) * 16, 8, NULL);
-  float diff[9];
-  double error = 0;
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
-    {
-      (*H)[i][j] = a[i * 3 + j] * p->ratio[i * 3 + j];
-    }
-
-  DSPF_sp_mat_mul((float *)H, 4, 4, (float *)p->X, 4, (float *)Yhap);
-
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
-    {
-      (*Yhap)[i][j] = (*Yhap)[i][j] / (*Yhap)[2][j];
-    };
-
-  for (i = 0; i < 2; i++)
-    for (j = 0; j < 4; j++)
-    {
-      diff[3 * i + j] = (*Yhap)[i][j] - (*p->Y)[i][j];
-      error += abs(diff[3 * i + j]);
-    }
-
-  int result =(int)error*100;
-
-  Memory_free(NULL, H, sizeof(float) * 16);
-  Memory_free(NULL, Yhap, sizeof(float) * 16);
-  return result;
-}
-
 Void taskPoseCalc()
 {
   float H[4][4] = {0};
