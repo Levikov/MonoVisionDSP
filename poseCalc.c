@@ -138,5 +138,16 @@ void initRotationMatrix(float (*restrict p)[3][TARGET_NUM],float (*restrict P)[4
 
 Void taskPoseCalc()
 {
+  float p[3][TARGET_NUM] = {1};
+  float R[2][3][3] = {0};
+  int i=0;
+  for(i=0;i<TARGET_NUM;i++)
+  {
+    p[0][i] = posBuffer.buffer[i].X;
+    p[1][i] = posBuffer.buffer[i].Y;
+  }
+  unifyImageCoord(&p,&M);
+  initRotationMatrix(&p,&P,R);
+
   
 }
