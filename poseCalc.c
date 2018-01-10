@@ -107,6 +107,35 @@ void solveQuarticEquation(float (* restrict IJphap)[4][2],float *restrict lambda
 
 }
 
+/**
+ * @brief Initialize rotation matrix R0 for the orthogonal iteration
+ * 
+ * @param p[IN] - pointer to 3xN focus unified coordinates of images of targets
+ * @param P[IN] - pointer to 4xN homogeneous world coordinates of targets
+ * @param R0[OUT] -  pointer to 3x3 rotation matrix
+ */
+void initRotationMatrix(float (*restrict p)[3][TARGET_NUM],float (*restrict P)[4][TARGET_NUM],float (*restrict R0)[3][3])
+{
+  float IJphap[4][2]={0};
+  float pp[TARGET_NUM][2]={0};
+  float lambda[2] = {0};
+  float miu[2] = {0};
+  int i=0;
+  for(i=0;i<TARGET_NUM;i++)
+  {
+    pp[i][0] = (*p)[0][i];
+    pp[i][1] = (*p)[1][i];
+  }
+  
+  DSPF_sp_mat_mul(&H,4,TARGET_NUM,&pp,2,&IJphap);
+  solveQuarticEquation(&IJphap,lambda,miu);
+
+  for(i=0;i<2;i++)
+  {
+
+  }
+}
+
 Void taskPoseCalc()
 {
   
