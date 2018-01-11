@@ -30,6 +30,20 @@ float Y[4][4] = {0};
 
 /**
  * @brief 
+ * Cross product of two vectors
+ * @param x1[IN] pointer to 3 x 1 vector
+ * @param x2[IN] pointer to 3 x 1 vector
+ * @param y[OUT] pointer to 3 x 1 vector
+ */
+void DSPF_sp_vec_cross(float *x1, float *x2, float *restrict y)
+{
+  y[0] = x1[1]*x2[2] - x1[2]*x2[1]; 
+  y[1] = x1[2]*x2[0] - x1[0]*x2[2];
+  y[2] = x1[0]*x2[1] - x1[1]*x2[0];
+}
+
+/**
+ * @brief 
  * Invert matrix calculation of 3 x 3 matrix
  * @param x[IN]   3 x 3 matrix 
  * @param y[OUT]  3 x 3 matrix
