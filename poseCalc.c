@@ -182,6 +182,9 @@ void initRotationMatrix(float (*restrict p)[3][TARGET_NUM],float (*restrict P)[4
   float pp[TARGET_NUM][2]={0};
   float lambda[2] = {0};
   float miu[2] = {0};
+  float Ip[3],Jp[3];
+  float crossIp[3][3],crossJp[3][3];
+  float tz;
   int i=0;
   for(i=0;i<TARGET_NUM;i++)
   {
@@ -191,9 +194,19 @@ void initRotationMatrix(float (*restrict p)[3][TARGET_NUM],float (*restrict P)[4
   
   DSPF_sp_mat_mul(&H,4,TARGET_NUM,&pp,2,&IJphap);
   solveQuarticEquation(&IJphap,lambda,miu);
+  for(i=0;i<3;i++)
+  {
+    Ip[i] = IJphap[i][0];
+    Jp[i] = IJphap[i][1];
+  }
 
   for(i=0;i<2;i++)
   {
+    Ip[2] = lambda[i];
+    Jp[2] = miu[i];
+    DSPF_sp_crossMat(Ip,&crossIp);
+    DSPF_sp_crossMat(Jp,&crossJp);
+    tz = sqrtdp(sqrtdp(1+IJphap[3][0]*IJphap[3][0])/sqrtdp(Ip[0]*Ip[0]+Ip[1]*Ip[1]+Ip[2]*Ip[2])*sqrtdp(1+IJphap[3][1]*IJphap[3][1])/sqrtdp(Jp[0]*Jp[0]+Jp[1]*Jp[1]+Jp[2]*Jp[2]));
 
   }
 }
