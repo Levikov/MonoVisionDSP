@@ -255,9 +255,9 @@ void initRotationMatrix(float (*restrict p)[3][TARGET_NUM],float (*restrict P)[4
   float lambda[2] = {0};
   float miu[2] = {0};
   float Ip[3],Jp[3];
-  float crossIp[3][3],crossJp[3][3];
+  float crossIp[3][3],crossJp[3][3],temp[3][3],temp2[3][3];
   float tz;
-  int i=0;
+  int i=0,j=0;
   for(i=0;i<TARGET_NUM;i++)
   {
     pp[i][0] = (*p)[0][i];
@@ -279,7 +279,15 @@ void initRotationMatrix(float (*restrict p)[3][TARGET_NUM],float (*restrict P)[4
     DSPF_sp_crossMat(Ip,&crossIp);
     DSPF_sp_crossMat(Jp,&crossJp);
     tz = sqrtdp(sqrtdp(1+IJphap[3][0]*IJphap[3][0])/sqrtdp(Ip[0]*Ip[0]+Ip[1]*Ip[1]+Ip[2]*Ip[2])*sqrtdp(1+IJphap[3][1]*IJphap[3][1])/sqrtdp(Jp[0]*Jp[0]+Jp[1]*Jp[1]+Jp[2]*Jp[2]));
-
+    DSPF_sp_mat_linear_comb(&crossIp,-tz*IJphap[3][1],&crossJp,tz*IJphap[3][0],3,3,&temp);
+    DSPF_sp_mat_linear_comb(&eye,1,&temp,1,3,3,&temp);
+    DSPF_sp_mat_inv(&temp,&temp2);
+    DSPF_sp_mat_linear_comb(&temp2,tz*tz,&zero,0,3,3,temp2);
+    DSPF_sp_vec_cross(Ip,Jp,temp[0]);
+    DSPF_sp_mat_mul_any(&temp2,3,3,&temp[0],1,&R0[i][2]);
+    DSPF_sp_mat_linear_comb(&Ip,tz,&R0[i][2],IJphap[3][0],1,3,&R0[i][0]);
+    DSPF_sp_mat_linear_comb(&Jp,tz,&R0[i][2],IJphap[3][1],1,3,&R0[i][1]);
+    DSPF_sp_mat_trans_local(&R0[i],3);
   }
 }
 
