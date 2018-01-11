@@ -30,6 +30,45 @@ float Y[4][4] = {0};
 
 /**
  * @brief 
+ * Matrix multiply (max dimension should be equal to or lower than 4)
+ * @param x1[IN]  pointer to r1 x c1 matrix
+ * @param r1[IN]  number of rows of x1
+ * @param c1[IN]  number of columns of x1
+ * @param x2[IN]  pointer to c1 x c2 matrix
+ * @param c2[IN]  number of columns of x2
+ * @param y[OUT]  pointer to r1 x c2 matrix
+ */
+void DSPF_sp_mat_mul_any(float *x1, const int r1, const int c1,
+    float *x2, const int c2, float *restrict y)
+{
+  float X1[4][4] = {0};
+  float X2[4][4] = {0};
+  float Y[4][4] = {0};
+  int i,j,k;
+  for(i = 0;i < r1;i++)
+  {
+    for(j =0;j<c1;j++)
+    {
+      X1[i][j] = x1[i*c1+j];
+      for(k = 0;k<c2;k++)
+      {
+        if(i==0)
+        X2[j][k] = x2[j*c2+k];
+        else
+        break;
+      }
+    }
+  }
+  DSPF_sp_mat_mul(&X1,4,4,&X2,4,&Y);
+  for(i = 0;i < r1;i++)
+  for(j = 0;j < c2;j++)
+  {
+    y[i*c1+j] = Y[i][j];
+  }
+}
+
+/**
+ * @brief 
  * Local transpose of matrix
  * @param x[IN/OUT] N x N matrix
  * @param N[IN]     dimension of matrix
