@@ -296,6 +296,57 @@ void initRotationMatrix(float (*restrict p)[3][TARGET_NUM],float (*restrict P)[4
   }
 }
 
+/**
+ * @brief 
+ * Orthogonal Iteration Algorithm for Pose Estimation
+ * @param P[IN]       3 x n world coordinates of n targets
+ * @param p[IN]       3 x n focus unified image coordinates of n projections of targets
+ * @param epsilon[IN] convergence threshold
+ * @param R[IN/OUT]   3 x 3 rotation matrix
+ * @param t[OUT]      3 x 1 translation vector
+ * @param error[OUT]  estimation error
+ */
+void orthogonalIteration(float (* P)[3][TARGET_NUM], float (* p)[3][TARGET_NUM], const float epsilon, 
+                         float (* restrict R)[3][3], float (* restrict t)[3], float (* restrict error))
+{
+  /**
+   * @brief Variable declaration
+   * 
+   */
+  float V[TARGET_NUM][3][3] = {0};
+  float G[3][9] = {0};
+  float F[3][3] = {0};
+  float Q[3][TARGET_NUM] = {0};
+  float vector3x1[3] = 0;
+  float vector3x3[3][3] = {0};
+  int i,j,k;
+
+  /**
+   * @brief Initialize matrices 
+   * 
+   */
+
+  for(i=0;i<TARGET_NUM;i++)
+  {
+    DSPF_sp_mat_col(&p,3,i,vector3x1);
+    DSPF_sp_mat_mul_any(vector3x1,3,1,vector3x1,3,&V[i]);
+    DSPF_sp_mat_linear_comb(&V[i],1/sqrtdp(vector3x1[0]*vector3x1[0]+vector3x1[1]*vector3x1[1]+vector3x1[2]*vector3x1[2]),&zero,0,3,3,&V[i]);
+    DSPF_sp_mat_linear_comb(&eye,1,&V[i],-1,3,3,&vector3x3);
+    DSPF_sp_mat_linear_comb(&vector3x3,1,&F,1,3,3,&F);
+    for(j=0;j<3;j++)
+    for(k=0;k<9;k++)
+    {
+      G[j][k] = G[j][k] + vector3x3[j][k%3]*vector3x1[k/3]; 
+    }
+  }
+  DSPF_sp_mat_inv(&F,&F);
+
+  /**
+   * @brief Main iteration
+   * 
+   */
+}
+
 Void taskPoseCalc()
 {
   float p[3][TARGET_NUM] = {1};
