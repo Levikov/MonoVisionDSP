@@ -30,6 +30,21 @@ float Y[4][4] = {0};
 
 /**
  * @brief 
+ * Get column of a matrix
+ * @param x1[IN]  r x ? matrix
+ * @param r[IN]   rows of x1
+ * @param c[IN]   column to obatin
+ * @param y[OUT]  r x 1 vector
+ */
+void DSPF_sp_mat_col(float *x1, const int r, const int c, float *restrict y)
+{
+  int i;
+  for(i=0;i<r;i++)
+  y[i] = x1[i*r+c];
+}
+
+/**
+ * @brief 
  * Linear combination of two matrix
  * @param x1[IN]    r x c matrix
  * @param alpha[IN] scale factor of x1
