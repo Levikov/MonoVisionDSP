@@ -63,7 +63,7 @@ void DSPF_sp_mat_mul_any(float *x1, const int r1, const int c1,
   for(i = 0;i < r1;i++)
   for(j = 0;j < c2;j++)
   {
-    y[i*c1+j] = Y[i][j];
+    y[i*c2+j] = Y[i][j];
   }
 }
 
