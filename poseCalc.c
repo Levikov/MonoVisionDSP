@@ -25,6 +25,28 @@ float Y[4][4] = {0};
 
 /**
  * @brief 
+ * Linear combination of two matrix
+ * @param x1[IN]    r x c matrix
+ * @param alpha[IN] scale factor of x1
+ * @param x2[IN]    r x c matrix
+ * @param beta[IN]  scale factor of x2
+ * @param r[IN]     rows
+ * @param c[IN]     columns
+ * @param y[OUT]    r x c matrix
+ */
+void DSPF_sp_mat_linear_comb(float *x1, float alpha,float *x2, float beta, 
+                            const int r, const int c, float *restrict y)
+{
+  int i,j;
+  for(i=0;i<r;i++)
+  for(j=0;j<c;j++)
+  {
+    *(y+i*c+j) = alpha*x1[i*c+j] + beta*x2[i*c+j];
+  }
+}
+
+/**
+ * @brief 
  * Convert image coordinates to focus unified coordinate.
  * @param p[IN/OUT]  3 x TARGET_NUM matrix of image coordinates
  * @param M[IN] 3 x 3 camera calibration matrix
