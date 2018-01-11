@@ -1,4 +1,9 @@
 #include <MonoGlobal.h>
+float zero[3][3] = {0};
+float eye[3][3] = {1,0,0,
+                   0,1,0,
+                   0,0,1};
+
 //Camera Calibration Matrix
 #pragma DATA_ALIGN(M, 8)
 float M[3][3] = {2.272727272727273e+03, 0, 640,
