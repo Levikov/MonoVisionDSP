@@ -30,6 +30,25 @@ float Y[4][4] = {0};
 
 /**
  * @brief 
+ * Local transpose of matrix
+ * @param x[IN/OUT] N x N matrix
+ * @param N[IN]     dimension of matrix
+ */
+void DSPF_sp_mat_trans_local(float *restrict x, const int N)
+{
+  int i,j = 0;
+  float temp;
+  for(i = 0;i < N;i++)
+   for(j = i+1;j < N;j++)
+   {
+     temp = x[i*N+j];
+     x[i*N+j] = x[j*N+i];
+     x[j*N+i] = temp;
+   }
+}
+
+/**
+ * @brief 
  * Cross product of two vectors
  * @param x1[IN] pointer to 3 x 1 vector
  * @param x2[IN] pointer to 3 x 1 vector
