@@ -28,8 +28,15 @@ Void taskReceiveNewImage(UArg a0)
                 taskBlobAnalysis();
 
                 //Pose Calculation
-                taskPoseCalc();
-
+                float p[2][TARGET_NUM] = {0};
+                int i;
+                for(i=0;i<TARGET_NUM;i++)
+                {
+                        p[0][i] = posBuffer.buffer[i].X;
+                        p[1][i] = posBuffer.buffer[i].Y;
+                }
+                poseCalc(&p,&pose);
+                
                 #ifdef DEBUG
                 debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;
                 #endif

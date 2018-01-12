@@ -347,18 +347,37 @@ void orthogonalIteration(float (* P)[3][TARGET_NUM], float (* p)[3][TARGET_NUM],
    */
 }
 
-Void taskPoseCalc()
+/**
+ * @brief 
+ * Calculate pose from given targets coordinates in image
+ * @param p[IN]   pointer to 2 x TARGET_NUM coordinates matrix of targets in image 
+ * @param pose[OUT]  pointer to Pose structure 
+ */
+void poseCalc(const float (*p)[2][TARGET_NUM],Pose *restrict pose)
 {
-  float p[3][TARGET_NUM] = {1};
+  float pp[3][TARGET_NUM] = {1};
   float R[2][3][3] = {0};
+  float t[2][3] = {0};
+  float error[2] = {0};
   int i=0;
   for(i=0;i<TARGET_NUM;i++)
   {
-    p[0][i] = posBuffer.buffer[i].X;
-    p[1][i] = posBuffer.buffer[i].Y;
+    pp[0][i] = (*p)[0][i];
+    pp[1][i] = (*p)[1][i];
   }
-  unifyImageCoord(&p,&M);
-  initRotationMatrix(&p,&P,R);
+  unifyImageCoord(&pp,&M);
+  initRotationMatrix(&pp,&P,R);
+  for(i=0;i<2;i++)
+  {
+    orthogonalIteration(&P,&pp,0.05,&R[i],&t[i],&error[i]);
+  }
+  if(error[0]<error[1])i=0;
 
+  pose->R.roll  =  atandp(R[i][2][1]/R[i][2][2])/PI*180;
+  pose->R.pitch = -asindp(R[i][2][3])/PI*180;
+  pose->R.yaw   =  atandp(R[i][1][3]/R[i][3][3])/PI*180;
   
+  pose->T.X = t[i][0];  
+  pose->T.Y = t[i][1];  
+  pose->T.Z = t[i][2];  
 }

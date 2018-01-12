@@ -156,5 +156,5 @@ extern Void taskThreshold();
 extern Void taskBinarize();
 extern Void taskConnectedComponentAnalysis();
 extern Void taskBlobAnalysis();
-extern Void taskPoseCalc();
+extern void poseCalc(const float (*p)[2][TARGET_NUM],Pose *restrict pose);
 #endif
