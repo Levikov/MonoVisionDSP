@@ -11,31 +11,24 @@ Void taskReceiveNewImage(UArg a0)
                 unsigned int t_start = Timestamp_get32();
                 #endif
                 //Copy debug image into buffer;
-                memcpy(&inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,debug_img,IMG_SIZE);
-                inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
-                inputBuffer.headId++;
+                // memcpy(&inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,debug_img,IMG_SIZE);
+                // inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
+                // inputBuffer.headId++;
 
-                //Threshold
-                taskThreshold();
+                // //Threshold
+                // taskThreshold();
 
-                //Binarize
-                taskBinarize();
+                // //Binarize
+                // taskBinarize();
 
-                //Connected component analysis
-                taskConnectedComponentAnalysis();
+                // //Connected component analysis
+                // taskConnectedComponentAnalysis();
 
-                //Blob Analysis
-                taskBlobAnalysis();
+                // //Blob Analysis
+                // taskBlobAnalysis();
 
                 //Pose Calculation
-                float p[2][TARGET_NUM] = {0};
-                int i;
-                for(i=0;i<TARGET_NUM;i++)
-                {
-                        p[0][i] = posBuffer.buffer[i].X;
-                        p[1][i] = posBuffer.buffer[i].Y;
-                }
-                poseCalc(&p,&pose);
+                poseCalc(&debug_pos,&pose);
                 
                 #ifdef DEBUG
                 debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;

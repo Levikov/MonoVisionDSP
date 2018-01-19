@@ -140,6 +140,7 @@ extern void *buffer_CC;
 extern Pose pose;
 
 extern unsigned char debug_img[];
+extern float debug_pos[3][4];
 
 extern Clock_Params clockParams[CORE_NUM];
 extern Clock_Handle clockHandle[CORE_NUM];

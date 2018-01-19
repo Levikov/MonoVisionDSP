@@ -10,6 +10,15 @@ void swap(Coord *a,Coord *b)
     return;
 }
 
+void swap_f64(double *a,double *b)
+{
+    double temp;
+    temp = *a;
+    *a = *b;
+    *b = temp;
+    return;
+}
+
 Void taskBlobAnalysis()
 {
     int i=0,j=0;
