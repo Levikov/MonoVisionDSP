@@ -156,6 +156,6 @@ extern Void taskImageSegment(UArg a0);
 extern Void taskThreshold();
 extern Void taskBinarize();
 extern Void taskConnectedComponentAnalysis();
-extern Void taskBlobAnalysis();
+extern void blob(VLIB_CCHandle ccHandle,Coord * restrict points);
 extern void poseCalc(const float (*p)[2][TARGET_NUM],Pose *restrict pose);
 #endif

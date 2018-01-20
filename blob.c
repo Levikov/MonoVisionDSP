@@ -19,34 +19,31 @@ void swap_f64(double *a,double *b)
     return;
 }
 
-Void taskBlobAnalysis()
+void blob(VLIB_CCHandle ccHandle,Coord * restrict points)
 {
     int i=0,j=0;
     unsigned int size;
     unsigned int cnt;
-    int status;
-    status = VLIB_getNumCCs(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&cnt);
-    if(blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList!=0x00000000);
-    free(blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList);
-    blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList = malloc(cnt*sizeof(VLIB_blob));
-    status = VLIB_createBlobList(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&(blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE]));
-    status = VLIB_getblobIIBufSize(IMG_HEIGHT,blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].maxNumItervals,&size);
+    VLIB_blobList blob;
+    VLIB_getNumCCs(&ccHandle,&cnt);
+    blob.blobList = malloc(cnt*sizeof(VLIB_blob));
+    VLIB_createBlobList(&ccHandle,&(blob));
+    VLIB_getblobIIBufSize(IMG_HEIGHT,blob.maxNumItervals,&size);
     unsigned char *pBuf = Memory_alloc(NULL,size,8,NULL);
     unsigned char *pBufCCMap = Memory_alloc(NULL,IMG_SIZE,8,NULL);
-    status = VLIB_createCCMap8Bit(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
+    VLIB_createCCMap8Bit(&ccHandle,pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
-    int n = blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].numBlobs;
-    Coord *pPoints = malloc(n*sizeof(Coord));
-    for(i=0;i<blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].numBlobs;i++)
+    int n = blob.numBlobs;
+    for(i=0;i<blob.numBlobs;i++)
     {
-        status = VLIB_createBlobIntervalImg(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],(AVMii *)pBuf,&blobBuffer.buffer[blobBuffer.headId%IMG_BUFFER_SIZE].blobList[i]);
+        VLIB_createBlobIntervalImg(&ccHandle,(AVMii *)pBuf,&blob.blobList[i]);
         VLIB_CC cc;
-        status = VLIB_getCCFeatures(&ccBuffer.buffer[ccBuffer.tailId%IMG_BUFFER_SIZE],&cc,i);
-        status = VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,pBuf,pBufCCMap,&perimeter);
-        pPoints[i].ratio =(float)(perimeter*perimeter)/cc.area;
-        pPoints[i].X = (float)cc.xsum/cc.area;
-        pPoints[i].Y = (float)cc.ysum/cc.area;
-        pPoints[i].Z = 1;
+        VLIB_getCCFeatures(&ccHandle,&cc,i);
+        VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,pBuf,pBufCCMap,&perimeter);
+        points[i].ratio =(float)(perimeter*perimeter)/cc.area;
+        points[i].X = (float)cc.xsum/cc.area;
+        points[i].Y = (float)cc.ysum/cc.area;
+        points[i].Z = 1;
     }
     float *varX = malloc(n*n*sizeof(float));
     float *varY = malloc(n*n*sizeof(float));
@@ -56,8 +53,8 @@ Void taskBlobAnalysis()
     for(i=0;i<n;i++)
     for(j=0;j<n;j++)
     {
-        varX[k] = pPoints[i].X - pPoints[j].X;
-        varY[k] = pPoints[i].Y - pPoints[j].Y;
+        varX[k] = points[i].X - points[j].X;
+        varY[k] = points[i].Y - points[j].Y;
         dist[k] = sqrtsp(varX[k]*varX[k]+varY[k]*varY[k]);
         k++;
     }
@@ -86,40 +83,31 @@ Void taskBlobAnalysis()
             }
         }
     }
-    swap(pPoints,pPoints+i-1);
-    swap(pPoints+1,pPoints+j-1);
-    swap(pPoints+2,pPoints+k-1);
+    swap(points,points+i-1);
+    swap(points+1,points+j-1);
+    swap(points+2,points+k-1);
 
     int l=0;
-    float mean = (pPoints[0].ratio+pPoints[1].ratio+pPoints[2].ratio)/3;
-    float var = sqrtsp(((pPoints[0].ratio-mean)*(pPoints[0].ratio-mean)+(pPoints[1].ratio-mean)*(pPoints[1].ratio-mean)+(pPoints[2].ratio-mean)*(pPoints[2].ratio-mean))/3);
+    float mean = (points[0].ratio+points[1].ratio+points[2].ratio)/3;
+    float var = sqrtsp(((points[0].ratio-mean)*(points[0].ratio-mean)+(points[1].ratio-mean)*(points[1].ratio-mean)+(points[2].ratio-mean)*(points[2].ratio-mean))/3);
     float min = 3*var;
     for(l=0;l<n;l++)
     {
         if(l==0||l==1||l==2)continue;
         else
         {
-            if(abs(pPoints[l].ratio-mean)<min)
+            if(abs(points[l].ratio-mean)<min)
             {
-                swap(pPoints+3,pPoints+l);
+                swap(points+3,points+l);
             }
         }
         
     }
-
-    memcpy(posBuffer.buffer,pPoints,TARGET_NUM*sizeof(Coord));
     
-
-    ccBuffer.tailId++;
-    blobBuffer.headId++;
-    blobBuffer.tailId++;
-    posBuffer.headId++;
-
     free(varX);
     free(varY);
     free(dist);
     Memory_free(NULL,pBuf,size);
     Memory_free(NULL,pBufCCMap,IMG_SIZE);
-    free(pPoints);
     
 }
