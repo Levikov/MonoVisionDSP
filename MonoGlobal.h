@@ -154,7 +154,7 @@ extern void initOutputProc();
 extern Void taskReceiveNewImage(UArg a0);
 extern Void taskImageSegment(UArg a0);
 extern Void taskThreshold();
-extern Void taskBinarize();
+extern void binarize(unsigned char *p,unsigned char *q);
 extern Void taskConnectedComponentAnalysis();
 extern void blob(VLIB_CCHandle ccHandle,Coord * restrict points);
 extern void poseCalc(const float (*p)[2][TARGET_NUM],Pose *restrict pose);
