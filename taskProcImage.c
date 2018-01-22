@@ -9,6 +9,8 @@ void taskProcImage(UArg a0)
         void *buffer_CC;
         int sizeCC;
         
+        while(true)
+        {
         // Copy debug image into buffer;
         recvEMIF(emifRecvAddr,image);
 
@@ -19,7 +21,7 @@ void taskProcImage(UArg a0)
         binarize(threshold,binary);
 
         //Connected component analysis
-        connectedComponent(binary,&ccHandle,buffer_CC,&sizeCC);
+        connectedComponent(binary,&ccHandle,&buffer_CC,&sizeCC);
 
         //Blob Analysis
         blob(&ccHandle,points);
@@ -31,5 +33,6 @@ void taskProcImage(UArg a0)
         sendEMIF(emifSendAddr,&pose);
 
         Memory_free(NULL,buffer_CC,sizeCC);
+        };
 
 }

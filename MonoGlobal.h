@@ -90,7 +90,7 @@ extern float debug_pos[3][4];
 //===========Function Declaration=======//
 extern void taskProcImage(UArg a0);
 extern void binarize(const unsigned char *p,unsigned int *q);
-extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char * bufferCC,int * size);
+extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char ** bufferCC,int * size);
 extern void blob(VLIB_CCHandle *ccHandle,Coord *points);
 extern void poseCalc(const Coord * points,Pose *pose);
 extern void recvEMIF(const void * address, unsigned char* image);

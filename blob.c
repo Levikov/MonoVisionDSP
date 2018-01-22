@@ -110,5 +110,6 @@ void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
     free(dist);
     Memory_free(NULL,pBuf,size);
     Memory_free(NULL,pBufCCMap,IMG_SIZE);
+    free(blob.blobList);
     free(point);
 }
