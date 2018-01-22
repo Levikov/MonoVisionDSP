@@ -1,38 +1,35 @@
 #include <MonoGlobal.h>
 #include <string.h>
 
-Void taskReceiveNewImage(UArg a0)
+void taskProcImage(UArg a0)
 {
-        while(TRUE)
-        {
-                //Cache_inv((xdc_Ptr)&inputBuffer,sizeof(inputBuffer),Cache_Type_ALL,1);
-                #ifdef DEBUG
-                //log processing time
-                unsigned int t_start = Timestamp_get32();
-                #endif
-                //Copy debug image into buffer;
-                // memcpy(&inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].buffer,debug_img,IMG_SIZE);
-                // inputBuffer.buffer[inputBuffer.headId%IMG_BUFFER_SIZE].FrameId = inputBuffer.headId;
-                // inputBuffer.headId++;
+        VLIB_CCHandle ccHandle;
+        Coord points[TARGET_NUM];
+        Pose pose;
+        void *buffer_CC;
+        int sizeCC;
+        
+        // Copy debug image into buffer;
+        recvEMIF(emifRecvAddr,image);
 
-                // //Threshold
-                // taskThreshold();
+        //Threshold
+        IMG_thr_le2min_8(image,threshold,IMG_WIDTH,IMG_HEIGHT,IMG_THRES);
 
-                // //Binarize
-                // taskBinarize();
+        //Binarize
+        binarize(threshold,binary);
 
-                // //Connected component analysis
-                // taskConnectedComponentAnalysis();
+        //Connected component analysis
+        connectedComponent(binary,&ccHandle,buffer_CC,&sizeCC);
 
-                // //Blob Analysis
-                // taskBlobAnalysis();
+        //Blob Analysis
+        blob(&ccHandle,points);
+        
+        //Pose Calculation
+        poseCalc(points,&pose);
 
-                //Pose Calculation
-                poseCalc(&debug_pos,&pose);
-                
-                #ifdef DEBUG
-                debug_imageReceive_time = (float)(Timestamp_get32() - t_start)/1000;
-                #endif
-                //Cache_wbAll();
-        }
+        //Send result
+        sendEMIF(emifSendAddr,&pose);
+
+        Memory_free(NULL,buffer_CC,sizeCC);
+
 }

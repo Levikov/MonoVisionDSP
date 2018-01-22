@@ -1,12 +1,11 @@
 #include <MonoGlobal.h>
 
-void binarize(unsigned char *p,unsigned char *q)
+void binarize(const unsigned char *p,unsigned int *q)
 {
     int i=0;
     VLIB_packMask32(p,q,IMG_SIZE);
     for(i=0;i<IMG_SIZE/32;i++)
     {
-        *q = ~(*q);
-        q++;
+        *(q+i) = ~(*(q+i));
     }
 }

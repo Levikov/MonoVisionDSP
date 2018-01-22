@@ -19,31 +19,32 @@ void swap_f64(double *a,double *b)
     return;
 }
 
-void blob(VLIB_CCHandle ccHandle,Coord * restrict points)
+void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
 {
     int i=0,j=0;
     unsigned int size;
-    unsigned int cnt;
+    int cnt;
     VLIB_blobList blob;
-    VLIB_getNumCCs(&ccHandle,&cnt);
+    VLIB_getNumCCs(ccHandle,&cnt);
     blob.blobList = malloc(cnt*sizeof(VLIB_blob));
-    VLIB_createBlobList(&ccHandle,&(blob));
+    VLIB_createBlobList(ccHandle,&(blob));
     VLIB_getblobIIBufSize(IMG_HEIGHT,blob.maxNumItervals,&size);
     unsigned char *pBuf = Memory_alloc(NULL,size,8,NULL);
     unsigned char *pBufCCMap = Memory_alloc(NULL,IMG_SIZE,8,NULL);
-    VLIB_createCCMap8Bit(&ccHandle,pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
+    VLIB_createCCMap8Bit(ccHandle,pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
     int n = blob.numBlobs;
+    Coord * point = malloc(n*sizeof(Coord));
     for(i=0;i<blob.numBlobs;i++)
     {
-        VLIB_createBlobIntervalImg(&ccHandle,(AVMii *)pBuf,&blob.blobList[i]);
+        VLIB_createBlobIntervalImg(ccHandle,(AVMii *)pBuf,&blob.blobList[i]);
         VLIB_CC cc;
-        VLIB_getCCFeatures(&ccHandle,&cc,i);
-        VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,pBuf,pBufCCMap,&perimeter);
-        points[i].ratio =(float)(perimeter*perimeter)/cc.area;
-        points[i].X = (float)cc.xsum/cc.area;
-        points[i].Y = (float)cc.ysum/cc.area;
-        points[i].Z = 1;
+        VLIB_getCCFeatures(ccHandle,&cc,i);
+        VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,(AVMii *)pBuf,pBufCCMap,&perimeter);
+        point[i].ratio =(float)(perimeter*perimeter)/cc.area;
+        point[i].X = (float)cc.xsum/cc.area;
+        point[i].Y = (float)cc.ysum/cc.area;
+        point[i].Z = 1;
     }
     float *varX = malloc(n*n*sizeof(float));
     float *varY = malloc(n*n*sizeof(float));
@@ -53,8 +54,8 @@ void blob(VLIB_CCHandle ccHandle,Coord * restrict points)
     for(i=0;i<n;i++)
     for(j=0;j<n;j++)
     {
-        varX[k] = points[i].X - points[j].X;
-        varY[k] = points[i].Y - points[j].Y;
+        varX[k] = point[i].X - point[j].X;
+        varY[k] = point[i].Y - point[j].Y;
         dist[k] = sqrtsp(varX[k]*varX[k]+varY[k]*varY[k]);
         k++;
     }
@@ -73,7 +74,7 @@ void blob(VLIB_CCHandle ccHandle,Coord * restrict points)
                 if(product>0.98)
                 {
                     float rate = dist[k*n+j]/dist[j*n+i];
-                    if(rate>1.0 && rate<1.4)
+                    if(rate>1.0 && rate<1.4&&point[i].ratio<15&&point[j].ratio<15&&point[k].ratio<15)
                         flag = 0;
                     else
                         continue;
@@ -83,31 +84,31 @@ void blob(VLIB_CCHandle ccHandle,Coord * restrict points)
             }
         }
     }
-    swap(points,points+i-1);
-    swap(points+1,points+j-1);
-    swap(points+2,points+k-1);
+    swap(point,point+i-1);
+    swap(point+1,point+j-1);
+    swap(point+2,point+k-1);
 
     int l=0;
-    float mean = (points[0].ratio+points[1].ratio+points[2].ratio)/3;
-    float var = sqrtsp(((points[0].ratio-mean)*(points[0].ratio-mean)+(points[1].ratio-mean)*(points[1].ratio-mean)+(points[2].ratio-mean)*(points[2].ratio-mean))/3);
+    float mean = (point[0].ratio+point[1].ratio+point[2].ratio)/3;
+    float var = sqrtsp(((point[0].ratio-mean)*(point[0].ratio-mean)+(point[1].ratio-mean)*(point[1].ratio-mean)+(point[2].ratio-mean)*(point[2].ratio-mean))/3);
     float min = 3*var;
     for(l=0;l<n;l++)
     {
         if(l==0||l==1||l==2)continue;
         else
         {
-            if(abs(points[l].ratio-mean)<min)
+            if(abs(point[l].ratio-mean)<min)
             {
-                swap(points+3,points+l);
+                swap(point+3,point+l);
             }
         }
         
     }
-    
+    memcpy(points,point,4*sizeof(Coord));
     free(varX);
     free(varY);
     free(dist);
     Memory_free(NULL,pBuf,size);
     Memory_free(NULL,pBufCCMap,IMG_SIZE);
-    
+    free(point);
 }

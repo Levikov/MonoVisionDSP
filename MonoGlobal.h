@@ -17,6 +17,7 @@
 
 #include <ti/imglib/imglib.h>
 #include <ti/vlib/vlib.h>
+#include <ti/vlib/src/common/c66/VLIB_types.h>
 #include <ti/dsplib/dsplib.h>
 #include <ti/mathlib/mathlib.h>
 #include <ti/sysbios/BIOS.h>
@@ -36,12 +37,12 @@
 #define CORE_NUM 8
 #define CLOCK_TICK_TIMEOUT 250000
 
+#define EMIF_IMG 0x7000000;
+#define EMIF_POSE 0x7400000;
 //===========Debug Variables==========//
 #ifdef DEBUG
 extern float debug_imageReceive_time;
 extern float debug_imageSegment_time;
-extern unsigned int debug_buffer_top;
-extern unsigned int debug_buffer_tail;
 #endif
 
 //===========Data Structure===========//
@@ -67,60 +68,6 @@ typedef struct
     float pitch;
 }Angle;
 
-typedef struct
-{
-    unsigned char buffer[IMG_SIZE];
-    unsigned int FrameId;
-}Frame;
-
-typedef struct
-{
-    unsigned int buffer[IMG_SIZE/32];
-    unsigned int FrameId;
-}Binary;
-
-
-typedef struct
-{
-    Frame buffer[IMG_BUFFER_SIZE];
-    unsigned int headId;
-    unsigned int tailId;
-}FrameBuffer;
-
-typedef struct
-{
-    Binary buffer[IMG_BUFFER_SIZE];
-    unsigned int headId;
-    unsigned int tailId;
-}BinaryBuffer;
-
-typedef struct
-{
-    VLIB_CCHandle buffer[IMG_BUFFER_SIZE];
-    unsigned int headId;
-    unsigned int tailId;
-}CCBuffer;
-
-typedef struct
-{
-    VLIB_CCHandle *buffer[IMG_BUFFER_SIZE];
-    unsigned int headId;
-    unsigned int tailId;
-}CCHandleBuffer;
-
-typedef struct
-{
-    VLIB_blobList buffer[IMG_BUFFER_SIZE];
-    unsigned int headId;
-    unsigned int tailId;
-}BlobBuffer;
-
-typedef struct
-{
-    Coord buffer[4];
-    unsigned int headId;
-    unsigned int tailId;
-}PosBuffer;
 
 typedef struct
 {
@@ -130,32 +77,23 @@ typedef struct
 
 
 //===========Global Variables===========//
-extern  FrameBuffer inputBuffer;
-extern  FrameBuffer thresholdBuffer;
-extern  BinaryBuffer binaryBuffer;
-extern  CCBuffer ccBuffer;
-extern  BlobBuffer blobBuffer;
-extern  PosBuffer posBuffer;
-extern void *buffer_CC;
-extern Pose pose;
+extern const void * emifRecvAddr;
+extern const void * emifSendAddr;
+extern unsigned char image[];
+extern unsigned char threshold[];
+extern unsigned int binary[];
+extern Coord points[];
 
 extern unsigned char debug_img[];
 extern float debug_pos[3][4];
 
-extern Clock_Params clockParams[CORE_NUM];
-extern Clock_Handle clockHandle[CORE_NUM];
-
 //===========Function Declaration=======//
-extern void initInputProc();
-extern void initImgSegProc();
-extern void initImgJudgeProc();
-extern void initPoseCalcProc();
-extern void initOutputProc();
-extern Void taskReceiveNewImage(UArg a0);
-extern Void taskImageSegment(UArg a0);
-extern Void taskThreshold();
-extern void binarize(unsigned char *p,unsigned char *q);
-extern Void taskConnectedComponentAnalysis();
-extern void blob(VLIB_CCHandle ccHandle,Coord * restrict points);
-extern void poseCalc(const float (*p)[2][TARGET_NUM],Pose *restrict pose);
+extern void taskProcImage(UArg a0);
+extern void binarize(const unsigned char *p,unsigned int *q);
+extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char * bufferCC,int * size);
+extern void blob(VLIB_CCHandle *ccHandle,Coord *points);
+extern void poseCalc(const Coord * points,Pose *pose);
+extern void recvEMIF(const void * address, unsigned char* image);
+extern void sendEMIF(const void * address, const Pose * pose);
+
 #endif

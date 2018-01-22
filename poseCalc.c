@@ -310,10 +310,10 @@ void initRotationMatrix(double (*restrict p)[3][TARGET_NUM],double (*restrict P)
 /**
  * @brief 
  * Calculate pose from given targets coordinates in image
- * @param p[IN]   pointer to 2 x TARGET_NUM coordinates matrix of targets in image 
+ * @param points[IN]   pointer to TARGET_NUM coordinates of targets in image 
  * @param pose[OUT]  pointer to Pose structure 
  */
-void poseCalc(const float (*p)[2][TARGET_NUM],Pose *restrict pose)
+void poseCalc(const Coord *points,Pose *restrict pose)
 {
   double pp[3][TARGET_NUM] = {1};
   double R[2][3][3] = {0};
@@ -323,8 +323,8 @@ void poseCalc(const float (*p)[2][TARGET_NUM],Pose *restrict pose)
   int i,j;
   for(i=0;i<TARGET_NUM;i++)
   {
-    pp[0][i] = (*p)[0][i];
-    pp[1][i] = (*p)[1][i];
+    pp[0][i] = points[i].X;
+    pp[1][i] = points[i].Y;
   }
   unifyImageCoord(&pp,&M);
   initRotationMatrix(&pp,&P,R);
