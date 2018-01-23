@@ -1,4 +1,5 @@
 #include <MonoGlobal.h>
+#ifdef POSE_CALC_METHOD_OI
 #include <float.h>
 #include <orthogonalIteration.h>
 #include <orthogonalIteration_initialize.h>
@@ -354,3 +355,4 @@ void poseCalc(const Coord *points,Pose *restrict pose)
   pose->T.Y = t[i][1];  
   pose->T.Z = t[i][2];  
 }
+#endif
