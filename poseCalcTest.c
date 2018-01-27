@@ -19,10 +19,6 @@ double p[4][4] = {0};
 int main(int argc,char **argv)
 {
     Pose poseTest,pose;
-    poseTest.T.X = 0;
-    poseTest.T.Y = 0;
-    poseTest.T.Z = 800;
-
     printf("case\troll\tyaw\tpitch\tZ\troll\tyaw\tpitch\tZ\t\n");
     int i=0;
     
@@ -35,7 +31,17 @@ int main(int argc,char **argv)
         for(poseTest.R.pitch = POSE_CALC_TEST_PITCH_LOW;
             poseTest.R.pitch<= POSE_CALC_TEST_PITCH_HIGH;
             poseTest.R.pitch+= POSE_CALC_TEST_PITCH_DEV)
+        for(poseTest.T.X = POSE_CALC_TEST_X_LOW;
+            poseTest.T.X<= POSE_CALC_TEST_X_HIGH;
+            poseTest.T.X+= POSE_CALC_TEST_X_DEV)
+        for(poseTest.T.Y = POSE_CALC_TEST_Y_LOW;
+            poseTest.T.Y<= POSE_CALC_TEST_Y_HIGH;
+            poseTest.T.Y+= POSE_CALC_TEST_Y_DEV)
+        for(poseTest.T.Z = POSE_CALC_TEST_Z_LOW;
+            poseTest.T.Z<= POSE_CALC_TEST_Z_HIGH;
+            poseTest.T.Z+= POSE_CALC_TEST_Z_DEV)
         {
+            i++;
             generateCoordinates(poseTest,&p);
             poseCalc(&p,&pose);
             printf("%d\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\n",i,
