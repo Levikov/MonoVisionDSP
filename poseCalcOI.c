@@ -11,14 +11,14 @@ double eye3[3][3] = {1,0,0,
                    0,0,1};
 
 //Camera Calibration Matrix
-#pragma DATA_ALIGN(M, 16)
-double M[3][3] = {2.272727272727273e+03, 0, 640,
+#pragma DATA_ALIGN(MM, 16)
+double MM[3][3] = {2.272727272727273e+03, 0, 640,
                  0, 2.272727272727273e+03, 640,
                  0, 0,  1};
 
 //Target Location Matrix
-#pragma DATA_ALIGN(P, 8)
-double P[4][4] = {-72.5, 17.5, 127.5, -72.5,
+#pragma DATA_ALIGN(PP, 8)
+double PP[4][4] = {-72.5, 17.5, 127.5, -72.5,
                  18.75,18.75, 18.75,-56.25,
                  0, 0, 0, 0,
                  1, 1, 1, 1};
@@ -314,7 +314,7 @@ void initRotationMatrix(double (*restrict p)[3][TARGET_NUM],double (*restrict P)
  * @param points[IN]   pointer to TARGET_NUM coordinates of targets in image 
  * @param pose[OUT]  pointer to Pose structure 
  */
-void poseCalc(const Coord *points,Pose *restrict pose)
+void poseCalc(const double (*points)[3][TARGET_NUM],Pose *restrict pose)
 {
   double pp[3][TARGET_NUM] = {1};
   double R[2][3][3] = {0};
@@ -324,14 +324,14 @@ void poseCalc(const Coord *points,Pose *restrict pose)
   int i,j;
   for(i=0;i<TARGET_NUM;i++)
   {
-    pp[0][i] = points[i].X;
-    pp[1][i] = points[i].Y;
+    pp[0][i] = (*points)[0][i];
+    pp[1][i] = (*points)[1][i];
   }
-  unifyImageCoord(&pp,&M);
-  initRotationMatrix(&pp,&P,R);
+  unifyImageCoord(&pp,&MM);
+  initRotationMatrix(&pp,&PP,R);
   DSPF_dp_mat_trans_local(R[0],3);
   DSPF_dp_mat_trans_local(R[1],3);
-  DSPF_dp_mat_trans_local(P,4);
+  DSPF_dp_mat_trans_local(PP,4);
   double Y[4][3];
   for(i=0;i<4;i++)for(j=0;j<3;j++)
   Y[i][j] = pp[j][i];
@@ -340,12 +340,12 @@ void poseCalc(const Coord *points,Pose *restrict pose)
   orthogonalIteration_initialize();
   for(i=0;i<2;i++)
   {
-    orthogonalIteration(P,Y,&R0[i],0.0001,&R[i],&t[i],&error[i]);
+    orthogonalIteration(PP,Y,&R0[i],0.001,&R[i],&t[i],&error[i]);
   }
   i=0;
   DSPF_dp_mat_trans_local(R[0],3);
   DSPF_dp_mat_trans_local(R[1],3);
-  DSPF_dp_mat_trans_local(P,4);
+  DSPF_dp_mat_trans_local(PP,4);
 
   pose->R.roll  =  atandp(R[i][1][0]/R[i][1][1])/PI*180;
   pose->R.pitch = -asindp(R[i][1][2])/PI*180;

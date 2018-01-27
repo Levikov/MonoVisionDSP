@@ -28,7 +28,7 @@ void rank(Coord *array,const int N)
     }
 }
 
-void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
+void blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
 {
     int i=0,j=0;
     unsigned int size;
@@ -50,14 +50,16 @@ void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
         VLIB_CC cc;
         VLIB_getCCFeatures(ccHandle,&cc,i);
         VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,(AVMii *)pBuf,pBufCCMap,&perimeter);
-        point[i].ratio =(float)(perimeter*perimeter)/cc.area;
-        point[i].X = (float)cc.xsum/cc.area;
-        point[i].Y = (float)cc.ysum/cc.area;
+        point[i].ratio =(double)(perimeter*perimeter)/cc.area;
+        point[i].X = (double)cc.xsum/cc.area;
+        point[i].Y = (double)cc.ysum/cc.area;
         point[i].Z = 1;
     }
-    float *varX = malloc(n*n*sizeof(float));
-    float *varY = malloc(n*n*sizeof(float));
-    float *dist = malloc(n*n*sizeof(float));
+    rank(point,n);
+
+    double *varX = malloc(n*n*sizeof(double));
+    double *varY = malloc(n*n*sizeof(double));
+    double *dist = malloc(n*n*sizeof(double));
 
     int k=0;
     for(i=0;i<n;i++)
@@ -70,24 +72,19 @@ void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
     }
 
     int flag = 1;
-    for(i=0;i<n&&flag;i++)
-    for(j=0;j<n&&flag;j++)
+    for(i=0;i<TARGET_NUM&&flag;i++)
+    for(j=0;j<TARGET_NUM&&flag;j++)
     {
         if(j==i)continue;
-        for(k=0;k<n&&flag;k++)
+        for(k=0;k<TARGET_NUM&&flag;k++)
         {
             if(k==j||k==i)continue;
             else
             {
-                float product = (varX[j*n+i]*varX[k*n+j]+varY[j*n+i]*varY[k*n+j])/dist[j*n+i]/dist[k*n+j];
+                double product = (varX[j*n+i]*varX[k*n+j]+varY[j*n+i]*varY[k*n+j])/dist[j*n+i]/dist[k*n+j];
                 if(product>0.98)
                 {
-                    float rate = dist[k*n+j]/dist[j*n+i];
-                    if(rate>1.0 && rate<1.4&&point[i].ratio<15&&point[j].ratio<15&&point[k].ratio<15)
                         flag = 0;
-                    else
-                        continue;
-
                 }
                 else continue;
             }
@@ -98,9 +95,9 @@ void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
     swap(point+2,point+k-1);
 
     int l=0;
-    float mean = (point[0].ratio+point[1].ratio+point[2].ratio)/3;
-    float var = sqrtsp(((point[0].ratio-mean)*(point[0].ratio-mean)+(point[1].ratio-mean)*(point[1].ratio-mean)+(point[2].ratio-mean)*(point[2].ratio-mean))/3);
-    float min = 3*var;
+    double mean = (point[0].ratio+point[1].ratio+point[2].ratio)/3;
+    double var = sqrtsp(((point[0].ratio-mean)*(point[0].ratio-mean)+(point[1].ratio-mean)*(point[1].ratio-mean)+(point[2].ratio-mean)*(point[2].ratio-mean))/3);
+    double min = 3*var;
     for(l=0;l<n;l++)
     {
         if(l==0||l==1||l==2)continue;
@@ -113,7 +110,12 @@ void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
         }
         
     }
-    memcpy(points,point,4*sizeof(Coord));
+    for(i=0;i<TARGET_NUM;i++)
+    {
+        (*points)[0][i] = point[i].X; 
+        (*points)[1][i] = point[i].Y; 
+        (*points)[2][i] = point[i].Z; 
+    }
     free(varX);
     free(varY);
     free(dist);

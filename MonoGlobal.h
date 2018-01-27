@@ -26,17 +26,17 @@
 
 //===========Debug Variables==========//
 #ifdef DEBUG
-extern float debug_imageReceive_time;
-extern float debug_imageSegment_time;
+extern double debug_imageReceive_time;
+extern double debug_imageSegment_time;
 #endif
 
 //===========Data Structure===========//
 typedef struct
 {
-    float X;
-    float Y;
-    float Z;
-    float ratio;
+    double X;
+    double Y;
+    double Z;
+    double ratio;
 }Coord;
 
 //==========Rotation Angle==========//
@@ -48,9 +48,9 @@ typedef struct
 //==================================//
 typedef struct
 {
-    float roll;
-    float yaw;
-    float pitch;
+    double roll;
+    double yaw;
+    double pitch;
 }Angle;
 
 
@@ -67,17 +67,21 @@ extern const void * emifSendAddr;
 extern unsigned char image[];
 extern unsigned char threshold[];
 extern unsigned int binary[];
-extern Coord points[];
+extern double points[3][TARGET_NUM];
+extern const double M[4][4];
+extern const double P[4][4];
+extern double p[4][4];
 
 extern unsigned char debug_img[];
-extern float debug_pos[3][4];
+extern double debug_pos[3][4];
 
 //===========Function Declaration=======//
 extern void taskProcImage(UArg a0);
 extern void binarize(const unsigned char *p,unsigned int *q);
 extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char ** bufferCC,int * size);
-extern void blob(VLIB_CCHandle *ccHandle,Coord *points);
-extern void poseCalc(const Coord * points,Pose *pose);
+extern void blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
+extern void generateCoordinates(Pose pose,double (*restrict p)[4][4]);
+extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
 extern void recvEMIF(const void * address, unsigned char* image);
 extern void sendEMIF(const void * address, const Pose * pose);
 
