@@ -17,6 +17,16 @@ void swap_f64(double *a,double *b)
     *b = temp;
     return;
 }
+void rank(Coord *array,const int N)
+{
+    int i,j;
+    for(i=0;i<N-1;i++)
+    {
+        for(j=i+1;j<N;j++)
+        if(array[i].ratio>array[j].ratio)
+        swap(array+i,array+j);
+    }
+}
 
 void blob(VLIB_CCHandle *ccHandle,Coord * restrict points)
 {
