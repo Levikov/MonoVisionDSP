@@ -1,8 +1,8 @@
 /*
- * rtGetNaN.h
+ * File: rtGetNaN.h
  *
- * Code generation for function 'getH'
- *
+ * MATLAB Coder version            : 3.3
+ * C/C++ source code generated on  : 19-Jan-2018 19:38:58
  */
 
 #ifndef RTGETNAN_H
@@ -16,4 +16,8 @@ extern real32_T rtGetNaNF(void);
 
 #endif
 
-/* End of code generation (rtGetNaN.h) */
+/*
+ * File trailer for rtGetNaN.h
+ *
+ * [EOF]
+ */

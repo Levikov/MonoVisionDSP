@@ -1,5 +1,5 @@
 /*
- * File: xswap.c
+ * File: xrot.c
  *
  * MATLAB Coder version            : 3.3
  * C/C++ source code generated on  : 19-Jan-2018 19:38:58
@@ -8,7 +8,7 @@
 /* Include Files */
 #include "rt_nonfinite.h"
 #include "orthogonalIteration.h"
-#include "xswap.h"
+#include "xrot.h"
 
 /* Function Definitions */
 
@@ -16,9 +16,11 @@
  * Arguments    : double x[9]
  *                int ix0
  *                int iy0
+ *                double c
+ *                double s
  * Return Type  : void
  */
-void xswap(double x[9], int ix0, int iy0)
+void xrot(double x[9], int ix0, int iy0, double c, double s)
 {
   int ix;
   int iy;
@@ -27,16 +29,16 @@ void xswap(double x[9], int ix0, int iy0)
   ix = ix0 - 1;
   iy = iy0 - 1;
   for (k = 0; k < 3; k++) {
-    temp = x[ix];
-    x[ix] = x[iy];
-    x[iy] = temp;
-    ix++;
+    temp = c * x[ix] + s * x[iy];
+    x[iy] = c * x[iy] - s * x[ix];
+    x[ix] = temp;
     iy++;
+    ix++;
   }
 }
 
 /*
- * File trailer for xswap.c
+ * File trailer for xrot.c
  *
  * [EOF]
  */

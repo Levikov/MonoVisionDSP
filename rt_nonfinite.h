@@ -1,8 +1,8 @@
 /*
- * rt_nonfinite.h
+ * File: rt_nonfinite.h
  *
- * Code generation for function 'getH'
- *
+ * MATLAB Coder version            : 3.3
+ * C/C++ source code generated on  : 19-Jan-2018 19:38:58
  */
 
 #ifndef RT_NONFINITE_H
@@ -48,4 +48,8 @@ typedef struct {
 
 #endif
 
-/* End of code generation (rt_nonfinite.h) */
+/*
+ * File trailer for rt_nonfinite.h
+ *
+ * [EOF]
+ */

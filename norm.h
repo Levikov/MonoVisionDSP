@@ -1,12 +1,12 @@
 /*
- * File: xnrm2.h
+ * File: norm.h
  *
  * MATLAB Coder version            : 3.3
  * C/C++ source code generated on  : 19-Jan-2018 19:38:58
  */
 
-#ifndef XNRM2_H
-#define XNRM2_H
+#ifndef NORM_H
+#define NORM_H
 
 /* Include Files */
 #include <math.h>
@@ -18,13 +18,12 @@
 #include "orthogonalIteration_types.h"
 
 /* Function Declarations */
-extern double b_xnrm2(int n, const double x[3], int ix0);
-extern double xnrm2(int n, const double x[9], int ix0);
+extern double norm(const double x[3]);
 
 #endif
 
 /*
- * File trailer for xnrm2.h
+ * File trailer for norm.h
  *
  * [EOF]
  */

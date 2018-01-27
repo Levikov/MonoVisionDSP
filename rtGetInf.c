@@ -1,8 +1,8 @@
 /*
- * rtGetInf.c
+ * File: rtGetInf.c
  *
- * Code generation for function 'getH'
- *
+ * MATLAB Coder version            : 3.3
+ * C/C++ source code generated on  : 19-Jan-2018 19:38:58
  */
 
 /*
@@ -134,4 +134,8 @@ real32_T rtGetMinusInfF(void)
   return minfF.wordL.wordLreal;
 }
 
-/* End of code generation (rtGetInf.c) */
+/*
+ * File trailer for rtGetInf.c
+ *
+ * [EOF]
+ */
