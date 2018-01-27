@@ -1,28 +1,10 @@
 #ifndef MONOGLOBAL_H
 #define MONOGLOBAL_H
 
-#include <c6x.h>
+
+#include "config.h"
 #include <string.h>
-
-#include <xdc/std.h>
-#include <xdc/runtime/Types.h>
-#include <xdc/runtime/Error.h>
-#include <xdc/runtime/System.h>
-#include <xdc/runtime/Timestamp.h>
-#include <xdc/runtime/Memory.h>
-
-#include <ti/sysbios/knl/clock.h>
-#include <ti/sysbios/gates/GateAll.h>
-#include <ti/sysbios/hal/Cache.h>
-
-#include <ti/imglib/imglib.h>
-#include <ti/vlib/vlib.h>
-#include <ti/vlib/src/common/c66/VLIB_types.h>
-#include <ti/dsplib/dsplib.h>
-#include <ti/mathlib/mathlib.h>
-#include <ti/sysbios/BIOS.h>
-#include <ti/sysbios/knl/Task.h>
-#include <config.h>
+#include <math.h>
 
 //===========Debug Variables==========//
 #ifdef DEBUG
@@ -68,7 +50,7 @@ extern unsigned char image[];
 extern unsigned char threshold[];
 extern unsigned int binary[];
 extern double points[3][TARGET_NUM];
-extern const double M[4][4];
+extern const double M[3][3];
 extern const double P[4][4];
 extern double p[4][4];
 
@@ -76,11 +58,7 @@ extern unsigned char debug_img[];
 extern double debug_pos[3][4];
 
 //===========Function Declaration=======//
-extern void taskProcImage(UArg a0);
-extern void binarize(const unsigned char *p,unsigned int *q);
-extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char ** bufferCC,int * size);
-extern void blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
-extern void generateCoordinates(Pose pose,double (*restrict p)[4][4]);
+extern void generateCoordinates(Pose pose,double (* p)[4][4]);
 extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
 extern void recvEMIF(const void * address, unsigned char* image);
 extern void sendEMIF(const void * address, const Pose * pose);

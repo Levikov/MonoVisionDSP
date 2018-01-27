@@ -1,12 +1,12 @@
 /*
- * xswap.h
+ * ixamax.h
  *
- * Code generation for function 'xswap'
+ * Code generation for function 'ixamax'
  *
  */
 
-#ifndef XSWAP_H
-#define XSWAP_H
+#ifndef IXAMAX_H
+#define IXAMAX_H
 
 /* Include files */
 #include <math.h>
@@ -18,8 +18,8 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern void xswap(double x[12], int ix0, int iy0);
+extern int ixamax(int n, const double x[3], int ix0);
 
 #endif
 
-/* End of code generation (xswap.h) */
+/* End of code generation (ixamax.h) */

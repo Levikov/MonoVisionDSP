@@ -1,12 +1,12 @@
 /*
- * xswap.h
+ * xgeqp3.h
  *
- * Code generation for function 'xswap'
+ * Code generation for function 'xgeqp3'
  *
  */
 
-#ifndef XSWAP_H
-#define XSWAP_H
+#ifndef XGEQP3_H
+#define XGEQP3_H
 
 /* Include files */
 #include <math.h>
@@ -18,8 +18,8 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern void xswap(double x[12], int ix0, int iy0);
+extern void xgeqp3(double A[12], double tau[3], int jpvt[3]);
 
 #endif
 
-/* End of code generation (xswap.h) */
+/* End of code generation (xgeqp3.h) */

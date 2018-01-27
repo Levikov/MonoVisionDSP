@@ -1,8 +1,8 @@
 /*
- * File: rt_nonfinite.c
+ * rt_nonfinite.c
  *
- * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 19-Jan-2018 19:38:58
+ * Code generation for function 'getH'
+ *
  */
 
 /*
@@ -93,8 +93,4 @@ boolean_T rtIsNaNF(real32_T value)
 
 }
 
-/*
- * File trailer for rt_nonfinite.c
- *
- * [EOF]
- */
+/* End of code generation (rt_nonfinite.c) */

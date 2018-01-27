@@ -1,30 +1,26 @@
 /*
- * File: xnrm2.h
+ * xnrm2.h
  *
- * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 19-Jan-2018 19:38:58
+ * Code generation for function 'xnrm2'
+ *
  */
 
 #ifndef XNRM2_H
 #define XNRM2_H
 
-/* Include Files */
+/* Include files */
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include "rt_nonfinite.h"
 #include "rtwtypes.h"
-#include "orthogonalIteration_types.h"
+#include "getH_types.h"
 
 /* Function Declarations */
-extern double b_xnrm2(int n, const double x[3], int ix0);
-extern double xnrm2(int n, const double x[9], int ix0);
+extern double b_xnrm2(int n, const double x[12], int ix0);
+extern double xnrm2(const double x[12], int ix0);
 
 #endif
 
-/*
- * File trailer for xnrm2.h
- *
- * [EOF]
- */
+/* End of code generation (xnrm2.h) */

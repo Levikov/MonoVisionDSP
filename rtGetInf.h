@@ -1,8 +1,8 @@
 /*
- * File: rtGetInf.h
+ * rtGetInf.h
  *
- * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 19-Jan-2018 19:38:58
+ * Code generation for function 'getH'
+ *
  */
 
 #ifndef RTGETINF_H
@@ -18,8 +18,4 @@ extern real32_T rtGetMinusInfF(void);
 
 #endif
 
-/*
- * File trailer for rtGetInf.h
- *
- * [EOF]
- */
+/* End of code generation (rtGetInf.h) */

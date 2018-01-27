@@ -1,12 +1,12 @@
 /*
- * xswap.h
+ * getH.h
  *
- * Code generation for function 'xswap'
+ * Code generation for function 'getH'
  *
  */
 
-#ifndef XSWAP_H
-#define XSWAP_H
+#ifndef GETH_H
+#define GETH_H
 
 /* Include files */
 #include <math.h>
@@ -18,8 +18,8 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern void xswap(double x[12], int ix0, int iy0);
+extern void getH(const double Y[12], const double X[12], double H[9]);
 
 #endif
 
-/* End of code generation (xswap.h) */
+/* End of code generation (getH.h) */

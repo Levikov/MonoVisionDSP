@@ -1,8 +1,8 @@
 /*
- * File: rtwtypes.h
+ * rtwtypes.h
  *
- * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 19-Jan-2018 19:38:58
+ * Code generation for function 'getH'
+ *
  */
 
 #ifndef RTWTYPES_H
@@ -157,8 +157,4 @@ typedef struct {
 #endif
 #endif
 
-/*
- * File trailer for rtwtypes.h
- *
- * [EOF]
- */
+/* End of code generation (rtwtypes.h) */

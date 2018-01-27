@@ -1,12 +1,12 @@
 /*
- * xswap.h
+ * getH_terminate.h
  *
- * Code generation for function 'xswap'
+ * Code generation for function 'getH_terminate'
  *
  */
 
-#ifndef XSWAP_H
-#define XSWAP_H
+#ifndef GETH_TERMINATE_H
+#define GETH_TERMINATE_H
 
 /* Include files */
 #include <math.h>
@@ -18,8 +18,8 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern void xswap(double x[12], int ix0, int iy0);
+extern void getH_terminate(void);
 
 #endif
 
-/* End of code generation (xswap.h) */
+/* End of code generation (getH_terminate.h) */

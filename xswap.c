@@ -1,24 +1,17 @@
 /*
- * File: xswap.c
+ * xswap.c
  *
- * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 19-Jan-2018 19:38:58
+ * Code generation for function 'xswap'
+ *
  */
 
-/* Include Files */
+/* Include files */
 #include "rt_nonfinite.h"
-#include "orthogonalIteration.h"
+#include "getH.h"
 #include "xswap.h"
 
 /* Function Definitions */
-
-/*
- * Arguments    : double x[9]
- *                int ix0
- *                int iy0
- * Return Type  : void
- */
-void xswap(double x[9], int ix0, int iy0)
+void xswap(double x[12], int ix0, int iy0)
 {
   int ix;
   int iy;
@@ -26,7 +19,7 @@ void xswap(double x[9], int ix0, int iy0)
   double temp;
   ix = ix0 - 1;
   iy = iy0 - 1;
-  for (k = 0; k < 3; k++) {
+  for (k = 0; k < 4; k++) {
     temp = x[ix];
     x[ix] = x[iy];
     x[iy] = temp;
@@ -35,8 +28,4 @@ void xswap(double x[9], int ix0, int iy0)
   }
 }
 
-/*
- * File trailer for xswap.c
- *
- * [EOF]
- */
+/* End of code generation (xswap.c) */

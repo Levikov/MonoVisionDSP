@@ -1,4 +1,4 @@
-#include <MonoGlobal.h>
+#include "MonoGlobal.h"
 
 void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char ** bufferCC,int * size)
 {
