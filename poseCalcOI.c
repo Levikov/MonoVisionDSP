@@ -1,8 +1,8 @@
-#include <MonoGlobal.h>
+#include "MonoGlobal.h"
 #ifdef POSE_CALC_METHOD_OI
 #include <float.h>
-#include <orthogonalIteration.h>
-#include <orthogonalIteration_initialize.h>
+#include "orthogonalIteration.h"
+#include "orthogonalIteration_initialize.h"
 
 #pragma DATA_ALIGN(zero,8) 
 const double zero[4][4] = {0};
@@ -232,7 +232,11 @@ void solveQuarticEquation(double (* restrict IJphap)[4][2],double *restrict lamb
   C = a*a*d*d + c*c - 2*a*c*d;
 
   delta = B*B - 4*A*C;
+  #ifdef PC_DEBUG
+  lambda[0] = A>0?sqrt((-B+sqrt(delta))/(2*A)):sqrt((-B-sqrt(delta))/(2*A));
+  #else
   lambda[0] = A>0?sqrtdp((-B+sqrtdp(delta))/(2*A)):sqrtdp((-B-sqrtdp(delta))/(2*A));
+  #endif
   lambda[1] = - lambda[0];
 
   A = b*b - 1/g;
@@ -240,7 +244,11 @@ void solveQuarticEquation(double (* restrict IJphap)[4][2],double *restrict lamb
   C = b*b*e*e + c*c - 2*b*c*e;
 
   delta = B*B - 4*A*C;
-  miu[0] = A>0?sqrtdp((-B+sqrtdp(delta))/(2*A)):sqrtdp((-B-sqrtdp(delta))/(2*A));
+  #ifdef PC_DEBUG
+  lambda[0] = A>0?sqrt((-B+sqrt(delta))/(2*A)):sqrt((-B-sqrt(delta))/(2*A));
+  #else
+  lambda[0] = A>0?sqrtdp((-B+sqrtdp(delta))/(2*A)):sqrtdp((-B-sqrtdp(delta))/(2*A));
+  #endif
   miu[1] = - miu[0];
 
   err[0] = fabs(c+lambda[0]*miu[0]-a*(d*+2*lambda[0]*lambda[0])) + abs(c+lambda[0]*miu[0]-b*(e*+2*miu[0]*miu[0])); 
@@ -294,7 +302,11 @@ void initRotationMatrix(double (*restrict p)[3][TARGET_NUM],double (*restrict P)
     Jp[2] = miu[i];
     DSPF_dp_crossMat(Ip,&crossIp);
     DSPF_dp_crossMat(Jp,&crossJp);
+    #ifdef PC_DEBUG
+    tz = sqrt(sqrt(1+IJphap[3][0]*IJphap[3][0])/sqrt(Ip[0]*Ip[0]+Ip[1]*Ip[1]+Ip[2]*Ip[2])*sqrt(1+IJphap[3][1]*IJphap[3][1])/sqrt(Jp[0]*Jp[0]+Jp[1]*Jp[1]+Jp[2]*Jp[2]));
+    #else
     tz = sqrtdp(sqrtdp(1+IJphap[3][0]*IJphap[3][0])/sqrtdp(Ip[0]*Ip[0]+Ip[1]*Ip[1]+Ip[2]*Ip[2])*sqrtdp(1+IJphap[3][1]*IJphap[3][1])/sqrtdp(Jp[0]*Jp[0]+Jp[1]*Jp[1]+Jp[2]*Jp[2]));
+    #endif
     DSPF_dp_mat_linear_comb(&crossIp,-tz*IJphap[3][1],&crossJp,tz*IJphap[3][0],3,3,&temp);
     DSPF_dp_mat_linear_comb(&eye3,1,&temp,1,3,3,&temp);
     DSPF_dp_mat_inv(&temp,3,&temp2);
@@ -340,16 +352,22 @@ void poseCalc(const double (*points)[3][TARGET_NUM],Pose *restrict pose)
   orthogonalIteration_initialize();
   for(i=0;i<2;i++)
   {
-    orthogonalIteration(PP,Y,&R0[i],0.001,&R[i],&t[i],&error[i]);
+    orthogonalIteration(PP,Y,&R0[i],POSE_CALC_METHOD_OI_EPSILON,&R[i],&t[i],&error[i]);
   }
   i=0;
   DSPF_dp_mat_trans_local(R[0],3);
   DSPF_dp_mat_trans_local(R[1],3);
   DSPF_dp_mat_trans_local(PP,4);
 
+  #ifdef PC_DEBUG
+  pose->R.roll  =  atan(R[i][1][0]/R[i][1][1])/PI*180;
+  pose->R.pitch = -asin(R[i][1][2])/PI*180;
+  pose->R.yaw   =  atan(R[i][0][2]/R[i][2][2])/PI*180;
+  #else
   pose->R.roll  =  atandp(R[i][1][0]/R[i][1][1])/PI*180;
   pose->R.pitch = -asindp(R[i][1][2])/PI*180;
   pose->R.yaw   =  atandp(R[i][0][2]/R[i][2][2])/PI*180;
+  #endif
   
   pose->T.X = t[i][0];  
   pose->T.Y = t[i][1];  
