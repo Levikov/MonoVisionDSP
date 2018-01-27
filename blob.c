@@ -2,11 +2,10 @@
 
 void swap(Coord *a,Coord *b)
 {
-    Coord *temp = malloc(sizeof(Coord));
-    *temp = *a;
+    Coord temp;
+    temp = *a;
     *a = *b;
-    *b = *temp;
-    free(temp);
+    *b = temp;
     return;
 }
 
