@@ -122,18 +122,30 @@ void DSPF_dp_mat_mul_any(double *x1,const double a, const int r1, const int c1,
 void simon_h(double *p, double *hx, int m, int n,void *adata)
 {
   double **A = (double **)adata;
-  double (*H)[3][3] = p;
-  double (*Y)[3][4] = hx;
+  double H[3][3];
+  double (*Y)[3][4] = A[1];
   memset(hx,0,sizeof(double)*12);
   int i,j;
-  double Yhap[2][4] = {0};
+  double Yhap[3][4] = {0};
   for (i = 0; i < 3; i++)
   for (j = 0; j < 3; j++)
   {
-    (*H)[i][j] = (*H)[j][i];
+    H[i][j] = p[j*3+i];
   }
 
-  DSPF_dp_mat_mul_any(H,1,3,3,A[0], 4,Y);
+  DSPF_dp_mat_mul_any(H,1,3,3,A[0], 4,Yhap);
+
+  for (i = 0; i < 3; i++)
+    for (j = 0; j < 4; j++)
+    {
+      Yhap[i][j] = Yhap[i][j] / Yhap[2][j];
+    };
+
+  for (i = 0; i < 3; i++)
+    for (j = 0; j < 4; j++)
+    {
+      hx[4 * i + j] = Yhap[i][j] - (*Y)[i][j];
+    }
 
 }
 
