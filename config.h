@@ -18,7 +18,7 @@
 #define EMIF_IMG 0x7000000;
 #define EMIF_POSE 0x7400000;
 
-#define POSE_CALC_METHOD_OI
+#define POSE_CALC_METHOD_MLE
 #define POSE_CALC_METHOD_OI_EPSILON 10e5*DBL_EPSILON
 
 //#define DEBUG_IMG
@@ -30,8 +30,8 @@
 #define POSE_CALC_TEST_ROLL_HIGH  0
 #define POSE_CALC_TEST_ROLL_DEV   10
 
-#define POSE_CALC_TEST_YAW_LOW    0
-#define POSE_CALC_TEST_YAW_HIGH   0
+#define POSE_CALC_TEST_YAW_LOW    -20
+#define POSE_CALC_TEST_YAW_HIGH   20
 #define POSE_CALC_TEST_YAW_DEV    1
 
 #define POSE_CALC_TEST_X_LOW      0
@@ -42,8 +42,8 @@
 #define POSE_CALC_TEST_Y_HIGH     0
 #define POSE_CALC_TEST_Y_DEV      1
 
-#define POSE_CALC_TEST_Z_LOW      40
-#define POSE_CALC_TEST_Z_HIGH     200
+#define POSE_CALC_TEST_Z_LOW      80
+#define POSE_CALC_TEST_Z_HIGH     80
 #define POSE_CALC_TEST_Z_DEV      5
 
 #define PC_DEBUG
