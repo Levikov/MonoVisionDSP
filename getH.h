@@ -18,7 +18,7 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern void getH(const double Y[12], const double X[12], double H[9]);
+extern void getH(const double Y[24], const double X[24], double H[9]);
 
 #endif
 

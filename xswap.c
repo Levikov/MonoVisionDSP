@@ -11,7 +11,7 @@
 #include "xswap.h"
 
 /* Function Definitions */
-void xswap(double x[12], int ix0, int iy0)
+void xswap(double x[24], int ix0, int iy0)
 {
   int ix;
   int iy;
@@ -19,7 +19,7 @@ void xswap(double x[12], int ix0, int iy0)
   double temp;
   ix = ix0 - 1;
   iy = iy0 - 1;
-  for (k = 0; k < 4; k++) {
+  for (k = 0; k < 8; k++) {
     temp = x[ix];
     x[ix] = x[iy];
     x[iy] = temp;

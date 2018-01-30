@@ -18,7 +18,7 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern void xgeqp3(double A[12], double tau[3], int jpvt[3]);
+extern void xgeqp3(double A[24], double tau[3], int jpvt[3]);
 
 #endif
 

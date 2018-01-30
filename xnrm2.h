@@ -18,8 +18,8 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern double b_xnrm2(int n, const double x[12], int ix0);
-extern double xnrm2(const double x[12], int ix0);
+extern double b_xnrm2(int n, const double x[24], int ix0);
+extern double xnrm2(const double x[24], int ix0);
 
 #endif
 

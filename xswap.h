@@ -18,7 +18,7 @@
 #include "getH_types.h"
 
 /* Function Declarations */
-extern void xswap(double x[12], int ix0, int iy0);
+extern void xswap(double x[24], int ix0, int iy0);
 
 #endif
 

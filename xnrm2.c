@@ -11,7 +11,7 @@
 #include "xnrm2.h"
 
 /* Function Definitions */
-double b_xnrm2(int n, const double x[12], int ix0)
+double b_xnrm2(int n, const double x[24], int ix0)
 {
   double y;
   double scale;
@@ -45,7 +45,7 @@ double b_xnrm2(int n, const double x[12], int ix0)
   return y;
 }
 
-double xnrm2(const double x[12], int ix0)
+double xnrm2(const double x[24], int ix0)
 {
   double y;
   double scale;
@@ -54,7 +54,7 @@ double xnrm2(const double x[12], int ix0)
   double t;
   y = 0.0;
   scale = 2.2250738585072014E-308;
-  for (k = ix0; k <= ix0 + 3; k++) {
+  for (k = ix0; k <= ix0 + 7; k++) {
     absxk = fabs(x[k - 1]);
     if (absxk > scale) {
       t = scale / absxk;

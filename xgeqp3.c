@@ -39,7 +39,7 @@ static double rt_hypotd_snf(double u0, double u1)
   return y;
 }
 
-void xgeqp3(double A[12], double tau[3], int jpvt[3])
+void xgeqp3(double A[24], double tau[3], int jpvt[3])
 {
   int k;
   int j;
@@ -67,15 +67,15 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
     work[j] = 0.0;
     xnorm = xnrm2(A, k);
     vn2[j] = xnorm;
-    k += 4;
+    k += 8;
     vn1[j] = xnorm;
   }
 
   for (i = 0; i < 3; i++) {
-    i_i = i + (i << 2);
+    i_i = i + (i << 3);
     pvt = (i + ixamax(3 - i, vn1, i + 1)) - 1;
     if (pvt + 1 != i + 1) {
-      xswap(A, 1 + (pvt << 2), 1 + (i << 2));
+      xswap(A, 1 + (pvt << 3), 1 + (i << 3));
       k = jpvt[pvt];
       jpvt[pvt] = jpvt[i];
       jpvt[i] = k;
@@ -85,7 +85,7 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
 
     t = A[i_i];
     absxk = 0.0;
-    xnorm = b_xnrm2(3 - i, A, i_i + 2);
+    xnorm = b_xnrm2(7 - i, A, i_i + 2);
     if (xnorm != 0.0) {
       beta1 = rt_hypotd_snf(A[i_i], xnorm);
       if (A[i_i] >= 0.0) {
@@ -94,7 +94,7 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
 
       if (fabs(beta1) < 1.0020841800044864E-292) {
         pvt = 0;
-        i0 = (i_i - i) + 4;
+        i0 = (i_i - i) + 8;
         do {
           pvt++;
           for (k = i_i + 1; k + 1 <= i0; k++) {
@@ -105,14 +105,14 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
           t *= 9.9792015476736E+291;
         } while (!(fabs(beta1) >= 1.0020841800044864E-292));
 
-        beta1 = rt_hypotd_snf(t, b_xnrm2(3 - i, A, i_i + 2));
+        beta1 = rt_hypotd_snf(t, b_xnrm2(7 - i, A, i_i + 2));
         if (t >= 0.0) {
           beta1 = -beta1;
         }
 
         absxk = (beta1 - t) / beta1;
         t = 1.0 / (t - beta1);
-        i0 = (i_i - i) + 4;
+        i0 = (i_i - i) + 8;
         for (k = i_i + 1; k + 1 <= i0; k++) {
           A[k] *= t;
         }
@@ -125,7 +125,7 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
       } else {
         absxk = (beta1 - A[i_i]) / beta1;
         t = 1.0 / (A[i_i] - beta1);
-        i0 = (i_i - i) + 4;
+        i0 = (i_i - i) + 8;
         for (k = i_i + 1; k + 1 <= i0; k++) {
           A[k] *= t;
         }
@@ -139,10 +139,10 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
     if (i + 1 < 3) {
       t = A[i_i];
       A[i_i] = 1.0;
-      i_ip1 = (i + ((i + 1) << 2)) + 1;
+      i_ip1 = (i + ((i + 1) << 3)) + 1;
       if (tau[i] != 0.0) {
-        lastv = 4 - i;
-        pvt = (i_i - i) + 3;
+        lastv = 8 - i;
+        pvt = (i_i - i) + 7;
         while ((lastv > 0) && (A[pvt] == 0.0)) {
           lastv--;
           pvt--;
@@ -151,7 +151,7 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
         lastc = 2 - i;
         exitg2 = false;
         while ((!exitg2) && (lastc > 0)) {
-          pvt = i_ip1 + ((lastc - 1) << 2);
+          pvt = i_ip1 + ((lastc - 1) << 3);
           j = pvt;
           do {
             exitg1 = 0;
@@ -183,8 +183,8 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
           }
 
           pvt = 0;
-          i0 = i_ip1 + ((lastc - 1) << 2);
-          for (k = i_ip1; k <= i0; k += 4) {
+          i0 = i_ip1 + ((lastc - 1) << 3);
+          for (k = i_ip1; k <= i0; k += 8) {
             ix = i_i;
             xnorm = 0.0;
             ijA = (k + lastv) - 1;
@@ -213,7 +213,7 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
             }
 
             k++;
-            pvt += 4;
+            pvt += 8;
           }
         }
       }
@@ -222,9 +222,9 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
     }
 
     for (j = i + 1; j + 1 < 4; j++) {
-      pvt = (i + (j << 2)) + 1;
+      pvt = (i + (j << 3)) + 1;
       if (vn1[j] != 0.0) {
-        xnorm = fabs(A[i + (j << 2)]) / vn1[j];
+        xnorm = fabs(A[i + (j << 3)]) / vn1[j];
         xnorm = 1.0 - xnorm * xnorm;
         if (xnorm < 0.0) {
           xnorm = 0.0;
@@ -234,28 +234,23 @@ void xgeqp3(double A[12], double tau[3], int jpvt[3])
         beta1 = xnorm * (beta1 * beta1);
         if (beta1 <= 1.4901161193847656E-8) {
           xnorm = 0.0;
-          if (3 - i == 1) {
-            xnorm = fabs(A[pvt]);
-          } else {
-            beta1 = 2.2250738585072014E-308;
-            k = (pvt - i) + 3;
-            while (pvt + 1 <= k) {
-              absxk = fabs(A[pvt]);
-              if (absxk > beta1) {
-                t = beta1 / absxk;
-                xnorm = 1.0 + xnorm * t * t;
-                beta1 = absxk;
-              } else {
-                t = absxk / beta1;
-                xnorm += t * t;
-              }
-
-              pvt++;
+          beta1 = 2.2250738585072014E-308;
+          k = (pvt - i) + 7;
+          while (pvt + 1 <= k) {
+            absxk = fabs(A[pvt]);
+            if (absxk > beta1) {
+              t = beta1 / absxk;
+              xnorm = 1.0 + xnorm * t * t;
+              beta1 = absxk;
+            } else {
+              t = absxk / beta1;
+              xnorm += t * t;
             }
 
-            xnorm = beta1 * sqrt(xnorm);
+            pvt++;
           }
 
+          xnorm = beta1 * sqrt(xnorm);
           vn1[j] = xnorm;
           vn2[j] = vn1[j];
         } else {
