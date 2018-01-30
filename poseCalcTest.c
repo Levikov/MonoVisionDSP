@@ -7,13 +7,13 @@ const double M[3][3] = {FOCUS/DX,0,IMG_WIDTH/2,0,FOCUS/DY,IMG_HEIGHT/2,0,0,1};
 
 //Target Location Matrix
 #pragma DATA_ALIGN(P, 8)
-const double P[4][4] = {-72.5, 17.5, 127.5, -72.5,
-                 18.75,18.75, 18.75,-56.25,
-                 1, 1, 1, 1,
-                 0,0,0,0};
+const double P[4][TARGET_NUM] = {-90, -90, -90, 0, 0, 0, 90, 90,
+                -90,0,90,-90,0,90,-90,0,
+                 1, 1, 1, 1,1,1,1,1,
+                 0,0,0,0,0,0,0,0};
 
 #pragma DATA_ALIGN(p, 8)
-double p[4][4] = {0};
+double p[4][TARGET_NUM] = {0};
 
 
 int main(int argc,char **argv)

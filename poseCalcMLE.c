@@ -9,10 +9,10 @@
 
 
 #pragma DATA_ALIGN(Y,8)
-double Y[4][3] = {0};
+double Y[TARGET_NUM][3] = {0};
 
 #pragma DATA_ALIGN(X,8)
-double X[4][3] = {0};
+double X[TARGET_NUM][3] = {0};
 
 
 /**
@@ -49,7 +49,27 @@ void DSPF_dp_vec_cross(double *x1, double *x2, double *restrict y)
 }
 
 
-
+/**
+ * @brief 
+ * Linear combination of two matrix
+ * @param x1[IN]    r x c matrix
+ * @param alpha[IN] scale factor of x1
+ * @param x2[IN]    r x c matrix
+ * @param beta[IN]  scale factor of x2
+ * @param r[IN]     rows
+ * @param c[IN]     columns
+ * @param y[OUT]    r x c matrix
+ */
+void DSPF_dp_mat_linear_comb(double *x1, double alpha,double *x2, double beta, 
+                            const int r, const int c, double *restrict y)
+{
+  int i,j;
+  for(i=0;i<r;i++)
+  for(j=0;j<c;j++)
+  {
+    *(y+i*c+j) = alpha*x1[i*c+j] + beta*x2[i*c+j];
+  }
+}
 
 
 /**
@@ -123,28 +143,28 @@ void simon_h(double *p, double *hx, int m, int n,void *adata)
 {
   double **A = (double **)adata;
   double H[3][3];
-  double (*Y)[3][4] = A[1];
+  double (*Y)[3][TARGET_NUM] = A[1];
   memset(hx,0,sizeof(double)*12);
   int i,j;
-  double Yhap[3][4] = {0};
+  double Yhap[3][TARGET_NUM] = {0};
   for (i = 0; i < 3; i++)
   for (j = 0; j < 3; j++)
   {
     H[i][j] = p[j*3+i];
   }
 
-  DSPF_dp_mat_mul_any(H,1,3,3,A[0], 4,Yhap);
+  DSPF_dp_mat_mul_any(H,1,3,3,A[0], TARGET_NUM,Yhap);
 
   for (i = 0; i < 3; i++)
-    for (j = 0; j < 4; j++)
+    for (j = 0; j < TARGET_NUM; j++)
     {
       Yhap[i][j] = Yhap[i][j] / Yhap[2][j];
     };
 
   for (i = 0; i < 3; i++)
-    for (j = 0; j < 4; j++)
+    for (j = 0; j < TARGET_NUM; j++)
     {
-      hx[4 * i + j] = Yhap[i][j] - (*Y)[i][j];
+      hx[TARGET_NUM * i + j] = Yhap[i][j] - (*Y)[i][j];
     }
 
 }
@@ -156,6 +176,7 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   double invM[3][3];
   double invMH[3][3] = {0};
   double *A[2];
+  double opts[5] = {1e-6,1e-30,1e-30,1e-30,1e-15};
   A[0]  = &P;
   A[1]  = points;
   double info[LM_INFO_SZ];
@@ -171,7 +192,7 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   }
   getH_initialize();
   getH(Y,X,H);
-  dlevmar_dif(simon_h,H,points,9,12,1000,NULL,info,NULL,NULL,A);
+  dlevmar_dif(simon_h,H,points,9,3*TARGET_NUM,1000,NULL,info,NULL,NULL,A);
   DSPF_dp_mat_trans_local(H,3);
   DSPF_dp_mat_inv(M,3,invM);
   DSPF_dp_mat_mul_any(invM,1,3,3,H,3,invMH);
@@ -179,17 +200,14 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
 
   double Zc1 = 1/sqrt(invMH[0][0]*invMH[0][0]+invMH[1][0]*invMH[1][0]+invMH[2][0]*invMH[2][0]);
   double Zc2 = 1/sqrt(invMH[0][1]*invMH[0][1]+invMH[1][1]*invMH[1][1]+invMH[2][1]*invMH[2][1]);
+  double Zc = sqrt(Zc1*Zc2);
+  
+  DSPF_dp_mat_linear_comb(invMH,Zc,invMH,0,3,3,invMH);
 
-  pose->T.Z = sqrt(Zc1*Zc2);
-  pose->T.X = pose->T.Z*invMH[0][2];
-  pose->T.Y = pose->T.Z*invMH[1][2];
 
-  //Normalize
-  for(i=0;i<3;i++)
-  {
-    invMH[i][0] = invMH[i][0]*Zc1;
-    invMH[i][1] = invMH[i][1]*Zc2;
-  }
+  pose->T.X = invMH[0][2];
+  pose->T.Y = invMH[1][2];
+  pose->T.Z = invMH[2][2];
 
   invMH[0][2] = invMH[1][0]*invMH[2][1] - invMH[1][1]*invMH[2][0];
   invMH[1][2] = invMH[0][0]*invMH[2][1] - invMH[0][1]*invMH[2][0];

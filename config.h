@@ -3,14 +3,14 @@
 
 #define PI 3.14159265358979323846
 
-#define IMG_WIDTH 1280
-#define IMG_HEIGHT 1280
-#define IMG_SIZE 1638400
+#define IMG_WIDTH 864
+#define IMG_HEIGHT 864
+#define IMG_SIZE 746496
 #define IMG_THRES 50
 
 #define IMG_BUFFER_SIZE 8
 
-#define TARGET_NUM 4
+#define TARGET_NUM 8
 
 #define CORE_NUM 8
 #define CLOCK_TICK_TIMEOUT 250000
@@ -30,8 +30,8 @@
 #define POSE_CALC_TEST_ROLL_HIGH  0
 #define POSE_CALC_TEST_ROLL_DEV   10
 
-#define POSE_CALC_TEST_YAW_LOW    -20
-#define POSE_CALC_TEST_YAW_HIGH   20
+#define POSE_CALC_TEST_YAW_LOW    -60
+#define POSE_CALC_TEST_YAW_HIGH   60
 #define POSE_CALC_TEST_YAW_DEV    1
 
 #define POSE_CALC_TEST_X_LOW      0
@@ -42,14 +42,14 @@
 #define POSE_CALC_TEST_Y_HIGH     0
 #define POSE_CALC_TEST_Y_DEV      1
 
-#define POSE_CALC_TEST_Z_LOW      80
-#define POSE_CALC_TEST_Z_HIGH     80
+#define POSE_CALC_TEST_Z_LOW      1500
+#define POSE_CALC_TEST_Z_HIGH     1500
 #define POSE_CALC_TEST_Z_DEV      5
 
 #define PC_DEBUG
 
 #define FOCUS 12.5f
-#define DX 5.5e-3
-#define DY 5.5e-3
+#define DX 11e-3
+#define DY 11e-3
 
 #endif
