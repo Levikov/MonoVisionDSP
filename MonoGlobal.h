@@ -84,5 +84,7 @@ extern void generateCoordinates(Pose pose,double (*restrict p)[4][4]);
 extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
 extern void recvEMIF(const void * address, unsigned char* image);
 extern void sendEMIF(const void * address, const Pose * pose);
+extern void EMIF_init();
+
 
 #endif

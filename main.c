@@ -2,6 +2,9 @@
  *  ======== main.c ========
  */
 #include "MonoGlobal.h"
+#include "KeyStone_UART_Init_drv.h"
+#include "KeyStone_EMIF16_Init.h"
+#include "UART_Interrupt.h"
 
 #ifdef DEBUG
 #include <MonoDebug.h>
@@ -9,8 +12,12 @@
 
 
 //===========Global Variables===========//
-const void * emifRecvAddr = (void *)&debug_img;
+const void * emifRecvAddr = (void *)EMIF_IMG;
 const void * emifSendAddr = (void *)EMIF_POSE;
+
+unsigned int Parat_Update_Flag = 0;
+unsigned int Rec_Img_num = 0;
+unsigned int Rec_Img_num_old = 0;
 
 #pragma DATA_ALIGN (image,8)
 unsigned char image[IMG_SIZE];
@@ -43,7 +50,27 @@ Int main()
     Error_Block eb;
     System_printf("enter main()\n");
     Error_init(&eb);
-    taskProcImage(0);
-    BIOS_start();    /* does not return */
+   	EMIF_init();//use nand cfg
+	//configure for non-loopback test, and use CPU for TX
+	KeyStone_UART_config(115200, FALSE, UART_USE_CORE_TO_TX);
+	KeyStone_UART_Interrupts_Init(TRUE, FALSE);//UART interrupt en,DMA disable
+    while(1)
+	{
+		if(Parat_Update_Flag == 1)
+		{
+			Parat_Update_Flag = 0;
+		}
+		else if(Rec_Img_num != Rec_Img_num_old)
+		{
+			Rec_Img_num_old = Rec_Img_num;
+			//taskProcImage(0);
+			if(Rec_Img_num > 10000)
+			{
+				Rec_Img_num = 0;
+				Rec_Img_num_old = 0;
+			}
+		}
+	}
+    BIOS_start();    
     return(0);
 }
