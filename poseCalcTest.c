@@ -7,20 +7,27 @@ const double M[3][3] = {FOCUS/DX,0,IMG_WIDTH/2,0,FOCUS/DY,IMG_HEIGHT/2,0,0,1};
 
 //Target Location Matrix
 #pragma DATA_ALIGN(P, 8)
-const double P[4][4] = {-72.5, 17.5, 127.5, -72.5,
-                 18.75,18.75, 18.75,-56.25,
-                 0, 0, 0, 0,
-                 0,0,0,0};
+const double P[4][TARGET_NUM] = 
+{
+-90,-90,-90,0,0,0,90,90,
+-90,0,90,-90,0,90,-90,0,
+0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1
+};
 
 #pragma DATA_ALIGN(p, 8)
-double p[4][4] = {0};
+double p[4][TARGET_NUM] = {0};
 
+double maxIteration = 1000;
+double epsilon = 0.01;
 
 int main(int argc,char **argv)
 {
     Pose poseTest,pose;
     printf("case\troll\tyaw\tpitch\tZ\troll\tyaw\tpitch\tZ\t\n");
     int i=0;
+    sscanf(argv[1],"%f",&maxIteration);
+    sscanf(argv[2],"%f",&epsilon);
     
     for(poseTest.R.roll = POSE_CALC_TEST_ROLL_LOW;
             poseTest.R.roll<= POSE_CALC_TEST_ROLL_HIGH;

@@ -51,16 +51,19 @@ extern unsigned char threshold[];
 extern unsigned int binary[];
 extern double points[3][TARGET_NUM];
 extern const double M[3][3];
-extern const double P[4][4];
-extern double p[4][4];
+extern const double P[4][TARGET_NUM];
+extern double p[4][TARGET_NUM];
 
 extern unsigned char debug_img[];
 extern double debug_pos[3][4];
 
 //===========Function Declaration=======//
-extern void generateCoordinates(Pose pose,double (* p)[4][4]);
+extern void generateCoordinates(Pose pose,double (* p)[4][TARGET_NUM]);
 extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
 extern void recvEMIF(const void * address, unsigned char* image);
 extern void sendEMIF(const void * address, const Pose * pose);
+
+extern double maxIteration;
+extern double epsilon;
 
 #endif

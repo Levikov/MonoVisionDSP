@@ -12,27 +12,29 @@ double eye3[3][3] = {1,0,0,
 
 //Camera Calibration Matrix
 #pragma DATA_ALIGN(MM, 16)
-double MM[3][3] = {2.272727272727273e+03, 0, 640,
-                 0, 2.272727272727273e+03, 640,
+double MM[3][3] = {FOCUS/DX, 0, IMG_WIDTH/2,
+                 0, FOCUS/DY, IMG_HEIGHT/2,
                  0, 0,  1};
 
 //Target Location Matrix
 #pragma DATA_ALIGN(PP, 8)
-double PP[4][4] = {-72.5, 17.5, 127.5, -72.5,
-                 18.75,18.75, 18.75,-56.25,
-                 0, 0, 0, 0,
-                 1, 1, 1, 1};
+double PP[4][TARGET_NUM] = 
+{
+-90,-90,-90,0,0,0,90,90,
+-90,0,90,-90,0,90,-90,0,
+0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1
+};
 
 //H = pinv(P*P')*P pre-calculated for initialization of R0
 #pragma DATA_ALIGN(H, 8)
-double H[4][4] = {-0.004817275747508,-3.322259136212628e-04,0.005149501661130,1.301042606982605e-18,
-                 0.010653377630122,0.004872646733112,-0.002192691029900,-0.013333333333333,
-                 0,0,0,0,
-                 0.250000000000000,0.250000000000000,0.250000000000000,0.250000000000000
-                };
+double H[4][TARGET_NUM] = {-0.00259259259259259,-0.00203703703703704,-0.00148148148148148,-0.000185185185185186,0.000370370370370368,0.000925925925925923,0.00222222222222222,0.00277777777777778,
+-0.00259259259259259,-0.000185185185185187,0.00222222222222222,-0.00203703703703704,0.000370370370370368,0.00277777777777777,-0.00148148148148148,0.000925925925925922,
+0,0,0,0,0,0,0,0,
+0.0666666666666667,0.100000000000000,0.133333333333333,0.100000000000000,0.133333333333333,0.166666666666667,0.133333333333333,0.166666666666667};
 
 #pragma DATA_ALIGN(Y, 8)
-double Y[4][4] = {0};
+double Y[4][TARGET_NUM] = {0};
 
 /**
  * @brief 
@@ -280,8 +282,8 @@ void initRotationMatrix(double (*restrict p)[3][TARGET_NUM],double (*restrict P)
   double crossIp[3][3],crossJp[3][3],temp[3][3],temp2[3][3];
   double tz;
   int i=0,j=0,k=0;
-  for(i=0;i<TARGET_NUM;i++)
-  for(j=0;j<4;j++)
+  for(i=0;i<4;i++)
+  for(j=0;j<TARGET_NUM;j++)
   for(k=0;k<2;k++)
   {
     IJphap[i][k]+=(*p)[k][j]*H[i][j];
@@ -343,21 +345,23 @@ void poseCalc(const double (*points)[3][TARGET_NUM],Pose *restrict pose)
   initRotationMatrix(&pp,&PP,R);
   DSPF_dp_mat_trans_local(R[0],3);
   DSPF_dp_mat_trans_local(R[1],3);
-  DSPF_dp_mat_trans_local(PP,4);
-  double Y[4][3];
-  for(i=0;i<4;i++)for(j=0;j<3;j++)
+  double Y[TARGET_NUM][3],PPP[TARGET_NUM][4];
+  for(i=0;i<TARGET_NUM;i++)for(j=0;j<3;j++)
   Y[i][j] = pp[j][i];
+  for(i=0;i<TARGET_NUM;i++)for(j=0;j<4;j++)
+  PPP[i][j] = PP[j][i];
 
   memcpy(R0,R,sizeof(R));
   orthogonalIteration_initialize();
   for(i=0;i<2;i++)
   {
-    orthogonalIteration(PP,Y,&R0[i],POSE_CALC_METHOD_OI_EPSILON,&R[i],&t[i],&error[i]);
+    orthogonalIteration(PPP,Y,&R0[i],epsilon,maxIteration,&R[i],&t[i],&error[i]);
   }
-  i=0;
-  DSPF_dp_mat_trans_local(R[0],3);
-  DSPF_dp_mat_trans_local(R[1],3);
-  DSPF_dp_mat_trans_local(PP,4);
+
+  if(error[0]<error[1])i=0;
+  else i=1;
+
+  DSPF_dp_mat_trans_local(R[i],3);
 
   #ifdef PC_DEBUG
   pose->R.roll  =  atan(R[i][1][0]/R[i][1][1])/PI*180;
