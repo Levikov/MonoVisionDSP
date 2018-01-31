@@ -2,20 +2,19 @@
  * File: orthogonalIteration.c
  *
  * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 31-Jan-2018 16:03:58
+ * C/C++ source code generated on  : 31-Jan-2018 14:24:47
  */
 
 /* Include Files */
 #include "rt_nonfinite.h"
-#include "poseCalculation.h"
 #include "orthogonalIteration.h"
 #include "mod.h"
-#include "eye.h"
 #include "kron.h"
+#include "eye.h"
 #include "norm.h"
 #include "diag.h"
 #include "det.h"
-#include "svd1.h"
+#include "svd.h"
 #include "repmat.h"
 #include "mean.h"
 #include "inv.h"
@@ -39,50 +38,53 @@
  *  err - indicate the transform error
  * Arguments    : const double X[32]
  *                const double Y[24]
- *                double R0[9]
+ *                const double R0[9]
  *                double epsilon
  *                double maxIteration
+ *                double R[9]
  *                double t[3]
  *                double *err2
  * Return Type  : void
  */
-void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
-  double epsilon, double maxIteration, double t[3], double *err2)
+void orthogonalIteration(const double X[32], const double Y[24], const double
+  R0[9], double epsilon, double maxIteration, double R[9], double t[3], double
+  *err2)
 {
   double G[27];
-  double F[9];
+  int ix;
   int i;
+  double F[9];
   double s[9];
   double mtmp;
-  int ix;
   double b_i;
   int b_ix;
   double err[10];
   int exitg1;
   double V[72];
+  int ixstart;
   double b_X[3];
-  static const double dv5[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
+  static const double dv0[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
 
   double b[27];
-  int ixstart;
   double Q[24];
-  double dv6[3];
-  double dv7[24];
-  double b_s[9];
+  double dv1[3];
+  double dv2[24];
   double c_X[24];
-  double dv8[3];
-  double dv9[24];
-  double b_Q[24];
+  double dv3[3];
+  double b_Q[9];
   double u[9];
   double v[9];
   double minval[5];
-  double c_s[3];
+  double b_s[3];
   boolean_T exitg2;
   boolean_T guard1 = false;
-  double r;
   double b_mtmp;
   memset(&G[0], 0, 27U * sizeof(double));
-  memset(&F[0], 0, 9U * sizeof(double));
+  for (ix = 0; ix < 9; ix++) {
+    F[ix] = 0.0;
+    R[ix] = R0[ix];
+  }
+
   for (i = 0; i < 8; i++) {
     mtmp = 0.0;
     for (ix = 0; ix < 3; ix++) {
@@ -100,23 +102,23 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
       for (b_ix = 0; b_ix < 3; b_ix++) {
         F[b_ix + 3 * ix] += s[b_ix + 3 * ix] - V[(b_ix + 3 * ix) + 9 * i];
       }
+    }
+
+    eye(s);
+    for (ix = 0; ix < 3; ix++) {
+      for (b_ix = 0; b_ix < 3; b_ix++) {
+        s[b_ix + 3 * ix] -= V[(b_ix + 3 * ix) + 9 * i];
+      }
 
       b_X[ix] = X[ix + (i << 2)];
     }
 
-    kron(b_X, dv5, b);
-    eye(s);
-    for (ix = 0; ix < 3; ix++) {
-      for (b_ix = 0; b_ix < 3; b_ix++) {
-        b_s[b_ix + 3 * ix] = s[b_ix + 3 * ix] - V[(b_ix + 3 * ix) + 9 * i];
-      }
-    }
-
+    kron(b_X, dv0, b);
     for (ix = 0; ix < 3; ix++) {
       for (b_ix = 0; b_ix < 9; b_ix++) {
         mtmp = 0.0;
         for (ixstart = 0; ixstart < 3; ixstart++) {
-          mtmp += b_s[ix + 3 * ixstart] * b[ixstart + 3 * b_ix];
+          mtmp += s[ix + 3 * ixstart] * b[ixstart + 3 * b_ix];
         }
 
         G[ix + 3 * b_ix] += mtmp;
@@ -145,7 +147,7 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
           b[ix + 3 * b_ix] += F[ix + 3 * ixstart] * G[ixstart + 3 * b_ix];
         }
 
-        t[ix] += b[ix + 3 * b_ix] * R0[b_ix];
+        t[ix] += b[ix + 3 * b_ix] * R[b_ix];
       }
     }
 
@@ -154,7 +156,7 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
         Q[ix + 3 * ixstart] = 0.0;
         mtmp = 0.0;
         for (b_ix = 0; b_ix < 3; b_ix++) {
-          mtmp += R0[ix + 3 * b_ix] * X[b_ix + (ixstart << 2)];
+          mtmp += R[ix + 3 * b_ix] * X[b_ix + (ixstart << 2)];
         }
 
         b_X[ix] = mtmp + t[ix];
@@ -168,92 +170,89 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
       }
     }
 
-    mean(Q, dv6);
-    repmat(dv6, dv7);
+    mean(Q, dv1);
+    repmat(dv1, dv2);
+    for (ix = 0; ix < 24; ix++) {
+      Q[ix] -= dv2[ix];
+    }
+
     for (ix = 0; ix < 8; ix++) {
       for (b_ix = 0; b_ix < 3; b_ix++) {
         c_X[b_ix + 3 * ix] = X[b_ix + (ix << 2)];
       }
     }
 
-    mean(c_X, dv8);
-    repmat(dv8, dv9);
-    for (ix = 0; ix < 8; ix++) {
-      for (b_ix = 0; b_ix < 3; b_ix++) {
-        b_Q[b_ix + 3 * ix] = Q[b_ix + 3 * ix] - dv7[b_ix + 3 * ix];
-      }
-    }
-
+    mean(c_X, dv3);
+    repmat(dv3, dv2);
     for (ix = 0; ix < 3; ix++) {
       for (b_ix = 0; b_ix < 8; b_ix++) {
-        c_X[b_ix + (ix << 3)] = X[ix + (b_ix << 2)] - dv9[ix + 3 * b_ix];
+        c_X[b_ix + (ix << 3)] = X[ix + (b_ix << 2)] - dv2[ix + 3 * b_ix];
       }
     }
 
     for (ix = 0; ix < 3; ix++) {
       for (b_ix = 0; b_ix < 3; b_ix++) {
-        b_s[ix + 3 * b_ix] = 0.0;
+        b_Q[ix + 3 * b_ix] = 0.0;
         for (ixstart = 0; ixstart < 8; ixstart++) {
-          b_s[ix + 3 * b_ix] += b_Q[ix + 3 * ixstart] * c_X[ixstart + (b_ix << 3)];
+          b_Q[ix + 3 * b_ix] += Q[ix + 3 * ixstart] * c_X[ixstart + (b_ix << 3)];
         }
       }
     }
 
-    b_svd(b_s, u, s, v);
+    svd(b_Q, u, s, v);
     for (ix = 0; ix < 3; ix++) {
       for (b_ix = 0; b_ix < 3; b_ix++) {
-        b_s[ix + 3 * b_ix] = 0.0;
+        b_Q[ix + 3 * b_ix] = 0.0;
         for (ixstart = 0; ixstart < 3; ixstart++) {
-          b_s[ix + 3 * b_ix] += v[ix + 3 * ixstart] * u[b_ix + 3 * ixstart];
+          b_Q[ix + 3 * b_ix] += v[ix + 3 * ixstart] * u[b_ix + 3 * ixstart];
         }
       }
     }
 
     b_X[0] = 1.0;
     b_X[1] = 1.0;
-    b_X[2] = det(b_s);
+    b_X[2] = det(b_Q);
     diag(b_X, s);
     for (ix = 0; ix < 3; ix++) {
       for (b_ix = 0; b_ix < 3; b_ix++) {
-        b_s[ix + 3 * b_ix] = 0.0;
+        b_Q[ix + 3 * b_ix] = 0.0;
         for (ixstart = 0; ixstart < 3; ixstart++) {
-          b_s[ix + 3 * b_ix] += v[ix + 3 * ixstart] * s[ixstart + 3 * b_ix];
+          b_Q[ix + 3 * b_ix] += v[ix + 3 * ixstart] * s[ixstart + 3 * b_ix];
         }
       }
 
       for (b_ix = 0; b_ix < 3; b_ix++) {
-        R0[ix + 3 * b_ix] = 0.0;
+        R[ix + 3 * b_ix] = 0.0;
         for (ixstart = 0; ixstart < 3; ixstart++) {
-          R0[ix + 3 * b_ix] += b_s[ix + 3 * ixstart] * u[b_ix + 3 * ixstart];
+          R[ix + 3 * b_ix] += b_Q[ix + 3 * ixstart] * u[b_ix + 3 * ixstart];
         }
       }
     }
 
     err[((int)(b_mod(b_i) + 1.0) + (((int)(c_mod((b_i - b_mod(b_i)) / 2.0) + 1.0)
            - 1) << 1)) - 1] = 0.0;
-    eye(s);
     for (ixstart = 0; ixstart < 8; ixstart++) {
+      eye(s);
       for (ix = 0; ix < 3; ix++) {
         mtmp = 0.0;
         for (b_ix = 0; b_ix < 3; b_ix++) {
-          b_s[b_ix + 3 * ix] = s[b_ix + 3 * ix] - V[(b_ix + 3 * ix) + 9 *
-            ixstart];
-          mtmp += R0[ix + 3 * b_ix] * X[b_ix + (ixstart << 2)];
+          s[b_ix + 3 * ix] -= V[(b_ix + 3 * ix) + 9 * ixstart];
+          mtmp += R[ix + 3 * b_ix] * X[b_ix + (ixstart << 2)];
         }
 
         b_X[ix] = mtmp + t[ix];
       }
 
       for (ix = 0; ix < 3; ix++) {
-        c_s[ix] = 0.0;
+        b_s[ix] = 0.0;
         for (b_ix = 0; b_ix < 3; b_ix++) {
-          c_s[ix] += b_s[ix + 3 * b_ix] * b_X[b_ix];
+          b_s[ix] += s[ix + 3 * b_ix] * b_X[b_ix];
         }
       }
 
       err[((int)(b_mod(b_i) + 1.0) + (((int)(c_mod((b_i - b_mod(b_i)) / 2.0) +
               1.0) - 1) << 1)) - 1] = err[((int)(b_mod(b_i) + 1.0) + (((int)
-        (c_mod((b_i - b_mod(b_i)) / 2.0) + 1.0) - 1) << 1)) - 1] + norm(c_s);
+        (c_mod((b_i - b_mod(b_i)) / 2.0) + 1.0) - 1) << 1)) - 1] + norm(b_s);
     }
 
     err[((int)(b_mod(b_i) + 1.0) + (((int)(c_mod((b_i - b_mod(b_i)) / 2.0) + 1.0)
@@ -264,12 +263,12 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
       ixstart = (i << 1) + 1;
       mtmp = err[ix];
       if (rtIsNaN(err[ix])) {
-        b_ix = ixstart + 1;
+        b_ix = ixstart;
         exitg2 = false;
-        while ((!exitg2) && (b_ix <= ix + 2)) {
-          ixstart = b_ix;
-          if (!rtIsNaN(err[b_ix - 1])) {
-            mtmp = err[b_ix - 1];
+        while ((!exitg2) && (b_ix + 1 <= ix + 2)) {
+          ixstart = b_ix + 1;
+          if (!rtIsNaN(err[b_ix])) {
+            mtmp = err[b_ix];
             exitg2 = true;
           } else {
             b_ix++;
@@ -319,21 +318,15 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
     guard1 = false;
     if (err[((int)(b_mod(b_i) + 1.0) + (((int)(c_mod((b_i - b_mod(b_i)) / 2.0) +
             1.0) - 1) << 1)) - 1] == mtmp) {
-      if (!rtIsInf(b_i)) {
-        r = fmod(b_i, 2.0);
-      } else {
-        r = rtNaN;
-      }
-
       ixstart = 1;
-      mtmp = err[(int)(r + 1.0) - 1];
-      if (rtIsNaN(err[(int)(r + 1.0) - 1])) {
+      mtmp = err[(int)(b_mod(b_i) + 1.0) - 1];
+      if (rtIsNaN(err[(int)(b_mod(b_i) + 1.0) - 1])) {
         ix = 2;
         exitg2 = false;
         while ((!exitg2) && (ix < 6)) {
           ixstart = ix;
-          if (!rtIsNaN(err[((int)(r + 1.0) + ((ix - 1) << 1)) - 1])) {
-            mtmp = err[((int)(r + 1.0) + ((ix - 1) << 1)) - 1];
+          if (!rtIsNaN(err[((int)(b_mod(b_i) + 1.0) + ((ix - 1) << 1)) - 1])) {
+            mtmp = err[((int)(b_mod(b_i) + 1.0) + ((ix - 1) << 1)) - 1];
             exitg2 = true;
           } else {
             ix++;
@@ -343,29 +336,23 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
 
       if (ixstart < 5) {
         while (ixstart + 1 < 6) {
-          if (err[((int)(r + 1.0) + (ixstart << 1)) - 1] > mtmp) {
-            mtmp = err[((int)(r + 1.0) + (ixstart << 1)) - 1];
+          if (err[((int)(b_mod(b_i) + 1.0) + (ixstart << 1)) - 1] > mtmp) {
+            mtmp = err[((int)(b_mod(b_i) + 1.0) + (ixstart << 1)) - 1];
           }
 
           ixstart++;
         }
       }
 
-      if (!rtIsInf(b_i)) {
-        r = fmod(b_i, 2.0);
-      } else {
-        r = rtNaN;
-      }
-
       ixstart = 1;
-      b_mtmp = err[(int)(r + 1.0) - 1];
-      if (rtIsNaN(err[(int)(r + 1.0) - 1])) {
+      b_mtmp = err[(int)(b_mod(b_i) + 1.0) - 1];
+      if (rtIsNaN(err[(int)(b_mod(b_i) + 1.0) - 1])) {
         ix = 2;
         exitg2 = false;
         while ((!exitg2) && (ix < 6)) {
           ixstart = ix;
-          if (!rtIsNaN(err[((int)(r + 1.0) + ((ix - 1) << 1)) - 1])) {
-            b_mtmp = err[((int)(r + 1.0) + ((ix - 1) << 1)) - 1];
+          if (!rtIsNaN(err[((int)(b_mod(b_i) + 1.0) + ((ix - 1) << 1)) - 1])) {
+            b_mtmp = err[((int)(b_mod(b_i) + 1.0) + ((ix - 1) << 1)) - 1];
             exitg2 = true;
           } else {
             ix++;
@@ -375,8 +362,8 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
 
       if (ixstart < 5) {
         while (ixstart + 1 < 6) {
-          if (err[((int)(r + 1.0) + (ixstart << 1)) - 1] < b_mtmp) {
-            b_mtmp = err[((int)(r + 1.0) + (ixstart << 1)) - 1];
+          if (err[((int)(b_mod(b_i) + 1.0) + (ixstart << 1)) - 1] < b_mtmp) {
+            b_mtmp = err[((int)(b_mod(b_i) + 1.0) + (ixstart << 1)) - 1];
           }
 
           ixstart++;
@@ -389,12 +376,12 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
           ixstart = (i << 1) + 1;
           mtmp = err[ix];
           if (rtIsNaN(err[ix])) {
-            b_ix = ixstart + 1;
+            b_ix = ixstart;
             exitg2 = false;
-            while ((!exitg2) && (b_ix <= ix + 2)) {
-              ixstart = b_ix;
-              if (!rtIsNaN(err[b_ix - 1])) {
-                mtmp = err[b_ix - 1];
+            while ((!exitg2) && (b_ix + 1 <= ix + 2)) {
+              ixstart = b_ix + 1;
+              if (!rtIsNaN(err[b_ix])) {
+                mtmp = err[b_ix];
                 exitg2 = true;
               } else {
                 b_ix++;
@@ -455,12 +442,12 @@ void orthogonalIteration(const double X[32], const double Y[24], double R0[9],
         ixstart = (i << 1) + 1;
         mtmp = err[ix];
         if (rtIsNaN(err[ix])) {
-          b_ix = ixstart + 1;
+          b_ix = ixstart;
           exitg2 = false;
-          while ((!exitg2) && (b_ix <= ix + 2)) {
-            ixstart = b_ix;
-            if (!rtIsNaN(err[b_ix - 1])) {
-              mtmp = err[b_ix - 1];
+          while ((!exitg2) && (b_ix + 1 <= ix + 2)) {
+            ixstart = b_ix + 1;
+            if (!rtIsNaN(err[b_ix])) {
+              mtmp = err[b_ix];
               exitg2 = true;
             } else {
               b_ix++;

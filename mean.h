@@ -2,7 +2,7 @@
  * File: mean.h
  *
  * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 31-Jan-2018 16:03:58
+ * C/C++ source code generated on  : 31-Jan-2018 14:24:47
  */
 
 #ifndef MEAN_H
@@ -15,7 +15,7 @@
 #include <string.h>
 #include "rt_nonfinite.h"
 #include "rtwtypes.h"
-#include "poseCalculation_types.h"
+#include "orthogonalIteration_types.h"
 
 /* Function Declarations */
 extern void mean(const double x[24], double y[3]);

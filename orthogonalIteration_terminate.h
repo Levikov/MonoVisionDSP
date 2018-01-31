@@ -1,12 +1,12 @@
 /*
- * File: svd1.h
+ * File: orthogonalIteration_terminate.h
  *
  * MATLAB Coder version            : 3.3
  * C/C++ source code generated on  : 31-Jan-2018 14:24:47
  */
 
-#ifndef SVD1_H
-#define SVD1_H
+#ifndef ORTHOGONALITERATION_TERMINATE_H
+#define ORTHOGONALITERATION_TERMINATE_H
 
 /* Include Files */
 #include <math.h>
@@ -18,12 +18,12 @@
 #include "orthogonalIteration_types.h"
 
 /* Function Declarations */
-extern void b_svd(const double A[9], double U[9], double s[3], double V[9]);
+extern void orthogonalIteration_terminate(void);
 
 #endif
 
 /*
- * File trailer for svd1.h
+ * File trailer for orthogonalIteration_terminate.h
  *
  * [EOF]
  */

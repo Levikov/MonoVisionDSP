@@ -1,5 +1,5 @@
 /*
- * File: xscal.c
+ * File: orthogonalIteration_initialize.c
  *
  * MATLAB Coder version            : 3.3
  * C/C++ source code generated on  : 31-Jan-2018 14:24:47
@@ -8,26 +8,21 @@
 /* Include Files */
 #include "rt_nonfinite.h"
 #include "orthogonalIteration.h"
-#include "xscal.h"
+#include "orthogonalIteration_initialize.h"
 
 /* Function Definitions */
 
 /*
- * Arguments    : double a
- *                double x[9]
- *                int ix0
+ * Arguments    : void
  * Return Type  : void
  */
-void xscal(double a, double x[9], int ix0)
+void orthogonalIteration_initialize(void)
 {
-  int k;
-  for (k = ix0; k <= ix0 + 2; k++) {
-    x[k - 1] *= a;
-  }
+  rt_InitInfAndNaN(8U);
 }
 
 /*
- * File trailer for xscal.c
+ * File trailer for orthogonalIteration_initialize.c
  *
  * [EOF]
  */

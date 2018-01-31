@@ -2,7 +2,7 @@
  * File: kron.h
  *
  * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 31-Jan-2018 16:03:58
+ * C/C++ source code generated on  : 31-Jan-2018 14:24:47
  */
 
 #ifndef KRON_H
@@ -15,7 +15,7 @@
 #include <string.h>
 #include "rt_nonfinite.h"
 #include "rtwtypes.h"
-#include "poseCalculation_types.h"
+#include "orthogonalIteration_types.h"
 
 /* Function Declarations */
 extern void kron(const double A[3], const double B[9], double K[27]);

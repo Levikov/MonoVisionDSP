@@ -2,7 +2,7 @@
  * File: xnrm2.h
  *
  * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 31-Jan-2018 16:03:58
+ * C/C++ source code generated on  : 31-Jan-2018 14:24:47
  */
 
 #ifndef XNRM2_H
@@ -15,13 +15,11 @@
 #include <string.h>
 #include "rt_nonfinite.h"
 #include "rtwtypes.h"
-#include "poseCalculation_types.h"
+#include "orthogonalIteration_types.h"
 
 /* Function Declarations */
-extern double b_xnrm2(int n, const double x[4], int ix0);
-extern double c_xnrm2(int n, const double x[9], int ix0);
-extern double d_xnrm2(const double x[3], int ix0);
-extern double xnrm2(int n, const double x[16], int ix0);
+extern double b_xnrm2(int n, const double x[3], int ix0);
+extern double xnrm2(int n, const double x[9], int ix0);
 
 #endif
 
