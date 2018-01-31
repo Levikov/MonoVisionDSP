@@ -2,7 +2,7 @@
  * File: mean.h
  *
  * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 19-Jan-2018 19:38:58
+ * C/C++ source code generated on  : 31-Jan-2018 14:24:47
  */
 
 #ifndef MEAN_H
@@ -18,7 +18,7 @@
 #include "orthogonalIteration_types.h"
 
 /* Function Declarations */
-extern void mean(const double x[12], double y[3]);
+extern void mean(const double x[24], double y[3]);
 
 #endif
 

@@ -2,7 +2,7 @@
  * File: orthogonalIteration.h
  *
  * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 19-Jan-2018 19:38:58
+ * C/C++ source code generated on  : 31-Jan-2018 14:24:47
  */
 
 #ifndef ORTHOGONALITERATION_H
@@ -18,8 +18,9 @@
 #include "orthogonalIteration_types.h"
 
 /* Function Declarations */
-extern void orthogonalIteration(const double X[16], const double Y[12], const
-  double R0[9], double epsilon, double R[9], double t[3], double *err2);
+extern void orthogonalIteration(const double X[32], const double Y[24], const
+  double R0[9], double epsilon, double maxIteration, double R[9], double t[3],
+  double *err2);
 
 #endif
 
