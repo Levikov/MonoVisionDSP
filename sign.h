@@ -1,12 +1,12 @@
 /*
- * File: xrotg.h
+ * File: sign.h
  *
  * MATLAB Coder version            : 3.3
  * C/C++ source code generated on  : 31-Jan-2018 16:03:58
  */
 
-#ifndef XROTG_H
-#define XROTG_H
+#ifndef SIGN_H
+#define SIGN_H
 
 /* Include Files */
 #include <math.h>
@@ -18,12 +18,12 @@
 #include "poseCalculation_types.h"
 
 /* Function Declarations */
-extern void xrotg(double *a, double *b, double *c, double *s);
+extern void b_sign(double *x);
 
 #endif
 
 /*
- * File trailer for xrotg.h
+ * File trailer for sign.h
  *
  * [EOF]
  */

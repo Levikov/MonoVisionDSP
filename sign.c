@@ -1,5 +1,5 @@
 /*
- * File: eye.c
+ * File: sign.c
  *
  * MATLAB Coder version            : 3.3
  * C/C++ source code generated on  : 31-Jan-2018 16:03:58
@@ -8,25 +8,29 @@
 /* Include Files */
 #include "rt_nonfinite.h"
 #include "poseCalculation.h"
-#include "eye.h"
+#include "sign.h"
 
 /* Function Definitions */
 
 /*
- * Arguments    : double I[9]
+ * Arguments    : double *x
  * Return Type  : void
  */
-void eye(double I[9])
+void b_sign(double *x)
 {
-  int k;
-  memset(&I[0], 0, 9U * sizeof(double));
-  for (k = 0; k < 3; k++) {
-    I[k + 3 * k] = 1.0;
+  if (*x < 0.0) {
+    *x = -1.0;
+  } else if (*x > 0.0) {
+    *x = 1.0;
+  } else {
+    if (*x == 0.0) {
+      *x = 0.0;
+    }
   }
 }
 
 /*
- * File trailer for eye.c
+ * File trailer for sign.c
  *
  * [EOF]
  */

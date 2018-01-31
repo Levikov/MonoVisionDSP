@@ -2,15 +2,33 @@
  * File: repmat.c
  *
  * MATLAB Coder version            : 3.3
- * C/C++ source code generated on  : 31-Jan-2018 14:24:47
+ * C/C++ source code generated on  : 31-Jan-2018 16:03:58
  */
 
 /* Include Files */
 #include "rt_nonfinite.h"
-#include "orthogonalIteration.h"
+#include "poseCalculation.h"
 #include "repmat.h"
 
 /* Function Definitions */
+
+/*
+ * Arguments    : const double a[2]
+ *                double b[4]
+ * Return Type  : void
+ */
+void b_repmat(const double a[2], double b[4])
+{
+  int jtilecol;
+  int ibtile;
+  int k;
+  for (jtilecol = 0; jtilecol < 2; jtilecol++) {
+    ibtile = jtilecol << 1;
+    for (k = 0; k < 2; k++) {
+      b[ibtile + k] = a[k];
+    }
+  }
+}
 
 /*
  * Arguments    : const double a[3]
