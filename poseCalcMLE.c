@@ -191,7 +191,7 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   }
   getH_initialize();
   getH(Y,X,H);
-  dlevmar_dif(simon_h,H,points,9,2*TARGET_NUM,1000,NULL,info,NULL,NULL,A);
+  dlevmar_dif(simon_h,H,NULL,9,2*TARGET_NUM,1000,NULL,info,NULL,NULL,A);
   DSPF_dp_mat_trans_local(H,3);
   DSPF_dp_mat_inv(M,3,invM);
   DSPF_dp_mat_mul_any(invM,1,3,3,H,3,invMH);
@@ -213,7 +213,7 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   invMH[2][2] = invMH[0][0]*invMH[1][1] - invMH[1][0]*invMH[0][1];
 
   pose->R.roll  =  atan(invMH[1][0]/invMH[1][1])/PI*180;
-  pose->R.pitch = -asin(invMH[1][2])/PI*180;
+  pose->R.pitch =  asin(invMH[1][2])/PI*180;
   pose->R.yaw   =  atan(invMH[0][2]/invMH[2][2])/PI*180;
 
 }
