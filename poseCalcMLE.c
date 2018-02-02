@@ -1,6 +1,6 @@
 #include "MonoGlobal.h"
-#include "getH.h"
-#include "getH_initialize.h"
+#include <getHomographyMatrix.h>
+#include <getHomographyMatrix_initialize.h>
 #include <math.h>
 #include <float.h>
 #include "levmar.h"
@@ -190,8 +190,8 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
     X[i][1] = P[1][i];  
     X[i][2] = 1;  
   }
-  getH_initialize();
-  getH(Y,X,H);
+  getHomographyMatrix_initialize();
+  getHomographyMatrix(X,Y,H);
   dlevmar_dif(simon_h,H,points,9,3*TARGET_NUM,1000,NULL,info,NULL,NULL,A);
   DSPF_dp_mat_trans_local(H,3);
   DSPF_dp_mat_inv(M,3,invM);
