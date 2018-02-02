@@ -144,7 +144,7 @@ void simon_h(double *p, double *hx, int m, int n,void *adata)
   double **A = (double **)adata;
   double H[3][3];
   double (*Y)[3][TARGET_NUM] = A[1];
-  memset(hx,0,sizeof(double)*12);
+  memset(hx,0,sizeof(double)*2*TARGET_NUM);
   int i,j;
   double Yhap[3][TARGET_NUM] = {0};
   for (i = 0; i < 3; i++)
@@ -161,10 +161,10 @@ void simon_h(double *p, double *hx, int m, int n,void *adata)
       Yhap[i][j] = Yhap[i][j] / Yhap[2][j];
     };
 
-  for (i = 0; i < 3; i++)
+  for (i = 0; i < 2; i++)
     for (j = 0; j < TARGET_NUM; j++)
     {
-      hx[TARGET_NUM * i + j] = Yhap[i][j] - (*Y)[i][j];
+      hx[TARGET_NUM * i + j] =   Yhap[i][j] - (*Y)[i][j];
     }
 
 }
@@ -176,7 +176,6 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   double invM[3][3];
   double invMH[3][3] = {0};
   double *A[2];
-  double opts[5] = {1e-6,1e-30,1e-30,1e-30,1e-15};
   A[0]  = &P;
   A[1]  = points;
   double info[LM_INFO_SZ];
@@ -192,7 +191,7 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   }
   getHomographyMatrix_initialize();
   getHomographyMatrix(X,Y,H);
-  dlevmar_dif(simon_h,H,points,9,3*TARGET_NUM,1000,NULL,info,NULL,NULL,A);
+  dlevmar_dif(simon_h,H,NULL,9,2*TARGET_NUM,1000,NULL,info,NULL,NULL,A);
   DSPF_dp_mat_trans_local(H,3);
   DSPF_dp_mat_inv(M,3,invM);
   DSPF_dp_mat_mul_any(invM,1,3,3,H,3,invMH);
@@ -204,7 +203,7 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   
   DSPF_dp_mat_linear_comb(invMH,Zc,invMH,0,3,3,invMH);
 
-
+  
   pose->T.X = invMH[0][2];
   pose->T.Y = invMH[1][2];
   pose->T.Z = invMH[2][2];
@@ -214,7 +213,7 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   invMH[2][2] = invMH[0][0]*invMH[1][1] - invMH[1][0]*invMH[0][1];
 
   pose->R.roll  =  atan(invMH[1][0]/invMH[1][1])/PI*180;
-  pose->R.pitch = -asin(invMH[1][2])/PI*180;
+  pose->R.pitch =  asin(invMH[1][2])/PI*180;
   pose->R.yaw   =  atan(invMH[0][2]/invMH[2][2])/PI*180;
 
 }
