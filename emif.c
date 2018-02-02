@@ -90,16 +90,16 @@ void recvEMIF(unsigned short * address, unsigned char * image)
 	}
 }
 
-void setInstructions(Pose *pose)
+void setInstructions(const Pose *pose)
 {
 	static unsigned short group = 0;
 	int i,j;
-	double *info = pose;
+	double *info = (double *)pose;
 	unsigned char *pChar;
 
 	for(i=0;i<6;i++)
 	{
-		pChar = &instructions[i];
+		pChar = (unsigned char *)&instructions[i];
 		instructions[i].head = 0x90EB;
 		instructions[i].unused = 0;
 		instructions[i].group = group;
@@ -144,7 +144,7 @@ void sendEMIF(unsigned short * address,const Pose * pose)
 
 	for(i=0;i<6;i++)
 	{
-		pShort = &instructionsBIG[i];
+		pShort = (unsigned short *)&instructionsBIG[i];
 		for(j=0;j<3;j++)
 		{
 		address[j] = pShort[j];

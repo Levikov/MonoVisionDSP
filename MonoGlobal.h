@@ -69,8 +69,9 @@ typedef struct
 
 
 //===========Global Variables===========//
-extern const void * emifRecvAddr;
-extern const void * emifSendAddr;
+extern const unsigned short * emifRecvAddr;
+extern const unsigned short * emifSendAddr;
+extern const unsigned short * emifFlagAddr;
 extern unsigned char image[];
 extern unsigned char threshold[];
 extern unsigned int binary[];

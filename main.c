@@ -12,8 +12,9 @@
 
 
 //===========Global Variables===========//
-const void * emifRecvAddr = (void *)EMIF_IMG;
-const void * emifSendAddr = (void *)EMIF_POSE;
+const unsigned short * emifRecvAddr = (const unsigned short *)EMIF_IMG;
+const unsigned short * emifSendAddr = (const unsigned short *)EMIF_POSE;
+const unsigned short * emifFlagAddr = (const unsigned short *)EMIF_FLAG;
 
 unsigned int Parat_Update_Flag = 0;
 unsigned int Rec_Img_num = 0;
@@ -42,8 +43,6 @@ const double P[4][4] = {-72.5, 17.5, 127.5, -72.5,
 #pragma DATA_ALIGN(p, 8)
 double p[4][4] = {0};
 
-unsigned short *readFlag = (unsigned short *)EMIF_FLAG;
-
 /*
  *  ======== main ========
  */
@@ -57,15 +56,11 @@ Int main()
 	KeyStone_UART_config(115200, FALSE, UART_USE_CORE_TO_TX);
 	KeyStone_UART_Interrupts_Init(TRUE, FALSE);//UART interrupt en,DMA disable
 
-    double starttime = 0;
-    double timespan = 0;
 	while(true)
     {
-        if(*readFlag==1)
+        if(*emifFlagAddr==1)
         {
-            timespan = (double)Timestamp_get32()/10000000 - starttime;
             taskProcImage(0);
-            starttime =(double)Timestamp_get32()/10000000;
         }
     }
     BIOS_start();
