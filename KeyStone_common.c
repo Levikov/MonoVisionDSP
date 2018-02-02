@@ -22,7 +22,7 @@
     Author       : Brighton Feng
     Modification : Add common device, CPU, interrupt initialization functions.
                    Print device information including device type, speed grade, 
-                   boot mode, required voltage, ID¡­
+                   boot mode, required voltage, IDï¿½ï¿½
                    Add EDMA enable/disable functions.
                    To support square wave generation by timer.
 ******************************************************************************/
@@ -36,7 +36,7 @@
 #include <ti/csl/cslr_chip.h>
 #include <ti/csl/csl_edma3.h>
 #include <ti/csl/csl_msmc.h>
-#include <ti/csl/csl_msmcaux.h>
+#include <ti/csl/csl_msmcAux.h>
 #include "KeyStone_common.h"
 
 /*----------------------------------------------*
@@ -204,7 +204,7 @@ void KeyStone_main_PLL_init (float ref_clock_MHz,
 		ref_clock_MHz, divisor, multiplier, gDSP_Core_Speed_Hz/1000000);
 
 	/*1. If executing this sequence immediately after device power-up, you must allow for*/
-	/*the PLL to become stable. PLL stabilization time is 100 ¦Ìs.                       */
+	/*the PLL to become stable. PLL stabilization time is 100 ï¿½ï¿½s.                       */
 	for(i=0; i< 20000; i++)
 		asm(" nop 5");
 
@@ -232,7 +232,7 @@ void KeyStone_main_PLL_init (float ref_clock_MHz,
 		/*f. In PLLCTL, write PLLPWRDN = 1 (power down the PLL)                              */
 		gpPLLC_regs->PLLCTL |= CSL_PLLC_PLLCTL_PLLPWRDN_MASK;	//Power down the PLL
 
-		/*g. Wait for at least 5 ¦Ìs based on the reference clock CLKIN (PLL power down      */
+		/*g. Wait for at least 5 ï¿½ï¿½s based on the reference clock CLKIN (PLL power down      */
 		/*toggling time)                                                                     */
 		for(i=0; i< 1000; i++)
 			asm(" nop 5");
@@ -273,8 +273,8 @@ void KeyStone_main_PLL_init (float ref_clock_MHz,
 	
 #if 0
 	/*8. If necessary, program PLLDIVn. Note that you must apply the GO operation to     */
-	/*change these dividers to a new ratios (see Section 3.2 ¡®¡®Divider n (D1 to Dn) and*/
-	/*GO Operation ¡¯¡¯ on page 3-3).                                                    */
+	/*change these dividers to a new ratios (see Section 3.2 ï¿½ï¿½ï¿½ï¿½Divider n (D1 to Dn) and*/
+	/*GO Operation ï¿½ï¿½ï¿½ï¿½ on page 3-3).                                                    */
 	/* Step 8a: Check that the GOSTAT bit in PLLSTAT is cleared to show that no GO
 	operation is currently in progress*/
 	while((gpPLLC_regs->PLLSTAT) & CSL_PLLC_PLLSTAT_GOSTAT_MASK);
@@ -298,14 +298,14 @@ void KeyStone_main_PLL_init (float ref_clock_MHz,
 	/*9. In PLLCTL , write PLLRST = 1 (PLL reset is asserted)*/
 	gpPLLC_regs->PLLCTL |= CSL_PLLC_PLLCTL_PLLRST_MASK;
 	
-	/*10. Wait for at least 7 ¦Ìs based on the reference clock CLKIN (PLL reset time)     */
+	/*10. Wait for at least 7 ï¿½ï¿½s based on the reference clock CLKIN (PLL reset time)     */
 	for(i=0; i< 2000; i++)
 		asm(" nop 5");
 
 	/*11. In PLLCTL, write PLLRST = 0 (PLL reset is released)                            */
 	gpPLLC_regs->PLLCTL &= ~CSL_PLLC_PLLCTL_PLLRST_MASK;
 
-	/*12. Wait for at least 2000 ¡Á CLKIN cycles ¡Á (PLLD + 1) (PLL lock time)            */
+	/*12. Wait for at least 2000 ï¿½ï¿½ CLKIN cycles ï¿½ï¿½ (PLLD + 1) (PLL lock time)            */
 	for(i=0; i< 400*multiplier; i++)
 		asm(" nop 5");
 
@@ -381,7 +381,7 @@ int KeyStone_PLL_init (PLL_ControlRegs * PLL_Regs, unsigned int inputDivisor,
 
 	/*3. Program PLLM and PLLD in PLLCTL0 register*/
 	/*4. Program BWADJ[7:0] in PLLCTL0 and BWADJ[11:8] in PLLCTL1 register. 
-	BWADJ value must be set to ((PLLM + 1) >> 1) ¨C 1)*/
+	BWADJ value must be set to ((PLLM + 1) >> 1) ï¿½C 1)*/
 	PLL_Regs->PLL_CTL0 = ((multiplier/2-1)<<PLLCTL0_BWADJ_SHIFT)
 		|((outputDivisor-1)<<PLLCTL_OD_SHIFT)
 		|((multiplier-1)<<PLLCTL0_PLLM_SHIFT)

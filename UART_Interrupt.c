@@ -22,15 +22,15 @@
 #define SOC_C6678
 #include <stdio.h>
 #include <ti/csl/csl_bootcfgAux.h>
-#include <ti/csl/csl_cpintc.h>
+#include <ti/csl/csl_cpIntc.h>
 #include "KeyStone_common.h"
 #include "KeyStone_UART_Init_drv.h"
-#include "UART_interrupt.h"
+#include "UART_Interrupt.h"
 #include "gpio.h"
 
 CSL_CPINTCRegs* CIC_Regs;
 extern unsigned int Rec_Img_num;
-extern unsigned int Parat_Update_Flag;//Í¼Ïñ½âÎö²ÎÊýÊý¾Ý
+extern unsigned int Parat_Update_Flag;//Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 extern unsigned char Parat_Update_data[16];
 //RX buffer used by RX interrupt
 #pragma DATA_ALIGN(UART_Rx_Buf,16);

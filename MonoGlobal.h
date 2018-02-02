@@ -11,7 +11,7 @@
 #include <xdc/runtime/Timestamp.h>
 #include <xdc/runtime/Memory.h>
 
-#include <ti/sysbios/knl/clock.h>
+#include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/gates/GateAll.h>
 #include <ti/sysbios/hal/Cache.h>
 

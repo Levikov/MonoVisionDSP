@@ -24,9 +24,9 @@
 
 #define SOC_C6678
 
-#include <ti\csl\cslr_device.h>
-#include <ti\csl\cslr_uart.h>
-#include <ti\csl\tistdtypes.h>
+#include <ti/csl/cslr_device.h>
+#include <ti/csl/cslr_uart.h>
+#include <ti/csl/tistdtypes.h>
 #include "KeyStone_common.h"
 
 /*the master used for TX*/
