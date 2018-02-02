@@ -1,8 +1,8 @@
 #include <MonoGlobal.h>
 
-void swap(Coord *a,Coord *b)
+void swap(Circle *a,Circle *b)
 {
-    Coord temp;
+    Circle temp;
     temp = *a;
     *a = *b;
     *b = temp;
@@ -17,7 +17,7 @@ void swap_f64(double *a,double *b)
     *b = temp;
     return;
 }
-void rank(Coord *array,const int N)
+void rank(Circle *array,const int N)
 {
     int i,j;
     for(i=0;i<N-1;i++)
@@ -43,7 +43,7 @@ void blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     VLIB_createCCMap8Bit(ccHandle,pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
     int n = blob.numBlobs;
-    Coord * point = malloc(n*sizeof(Coord));
+    Circle * point = malloc(n*sizeof(Circle));
     for(i=0;i<blob.numBlobs;i++)
     {
         VLIB_createBlobIntervalImg(ccHandle,(AVMii *)pBuf,&blob.blobList[i]);

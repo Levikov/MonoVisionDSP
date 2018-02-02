@@ -37,6 +37,13 @@ typedef struct
     double Y;
     double Z;
     double ratio;
+}Circle;
+
+typedef struct
+{
+    double X;
+    double Y;
+    double Z;
 }Coord;
 
 //==========Rotation Angle==========//
