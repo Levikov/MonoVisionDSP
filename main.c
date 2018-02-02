@@ -56,7 +56,7 @@ Int main()
 	KeyStone_UART_config(115200, FALSE, UART_USE_CORE_TO_TX);
 	KeyStone_UART_Interrupts_Init(TRUE, FALSE);//UART interrupt en,DMA disable
 
-	while(true)
+	while(TRUE)
     {
         if(*emifFlagAddr==1)
         {
