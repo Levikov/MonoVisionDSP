@@ -42,6 +42,8 @@ const double P[4][4] = {-72.5, 17.5, 127.5, -72.5,
 #pragma DATA_ALIGN(p, 8)
 double p[4][4] = {0};
 
+unsigned short *readFlag = (unsigned short *)EMIF_FLAG;
+
 /*
  *  ======== main ========
  */
@@ -54,23 +56,18 @@ Int main()
 	//configure for non-loopback test, and use CPU for TX
 	KeyStone_UART_config(115200, FALSE, UART_USE_CORE_TO_TX);
 	KeyStone_UART_Interrupts_Init(TRUE, FALSE);//UART interrupt en,DMA disable
-    while(1)
-	{
-		if(Parat_Update_Flag == 1)
-		{
-			Parat_Update_Flag = 0;
-		}
-		else if(Rec_Img_num != Rec_Img_num_old)
-		{
-			Rec_Img_num_old = Rec_Img_num;
-			//taskProcImage(0);
-			if(Rec_Img_num > 10000)
-			{
-				Rec_Img_num = 0;
-				Rec_Img_num_old = 0;
-			}
-		}
-	}
-    BIOS_start();    
+
+    double starttime = 0;
+    double timespan = 0;
+	while(true)
+    {
+        if(*readFlag==1)
+        {
+            timespan = (double)Timestamp_get32()/10000000 - starttime;
+            taskProcImage(0);
+            starttime =(double)Timestamp_get32()/10000000;
+        }
+    }
+    BIOS_start();
     return(0);
 }

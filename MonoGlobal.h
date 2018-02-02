@@ -55,16 +55,16 @@ typedef struct
 //==================================//
 typedef struct
 {
+    double pitch;
     double roll;
     double yaw;
-    double pitch;
 }Angle;
 
 
 typedef struct
 {
-    Angle R;
     Coord T;
+    Angle R;
 }Pose;
 
 
@@ -89,8 +89,8 @@ extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,un
 extern void blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
 extern void generateCoordinates(Pose pose,double (*restrict p)[4][4]);
 extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
-extern void recvEMIF(const void * address, unsigned char* image);
-extern void sendEMIF(const void * address, const Pose * pose);
+extern void recvEMIF(unsigned short * address, unsigned char* image);
+extern void sendEMIF(unsigned short * address, const Pose * pose);
 extern void EMIF_init();
 
 

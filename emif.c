@@ -4,6 +4,33 @@
 #include <ti/csl/csl_edma3.h>
 #include "KeyStone_EMIF16_Init.h"
 
+typedef struct
+{
+	unsigned char FarStatus:1;
+	unsigned char GlobalStatus:1;
+	unsigned char NearLStatus:1;
+	unsigned char NearRStatus:1;
+	unsigned char Unused:2;
+	unsigned char isInRange:1;
+}Status;
+
+typedef struct
+{
+	unsigned short head;
+	unsigned short group;
+	Status status;
+	unsigned char parameter;
+	double info;
+	unsigned char unused;
+	unsigned char checksum;
+}PoseInstruction;
+
+#pragma DATA_ALIGN(instructions,8)
+PoseInstruction instructions[6];
+
+#pragma DATA_ALIGN(instructions,8)
+PoseInstruction instructionsBIG[6];
+
 EMIF16_CE_Config gNandCeCfg;/*the configuration for the CE of NAND FLASH*/
 EMIF16_Config gEmif16Cfg;
 
@@ -27,6 +54,7 @@ void EMIF_init()
 	gNandCeCfg.nor_pg_Cfg= NULL;
 
 	gEmif16Cfg.ceCfg[1] = &gNandCeCfg;   // ce1,old ce0  niu
+	gEmif16Cfg.ceCfg[2] = &gNandCeCfg;   // ce1,old ce0  niu
 
 	gEmif16Cfg.wait0Polarity= EMIF_LOW_WAIT;
 	gEmif16Cfg.wait1Polarity= EMIF_LOW_WAIT;
@@ -41,21 +69,64 @@ void EMIF_init()
  * @param address[IN/OUT] pointer to EMIF
  * @param image[OUT] pointer 
  */
-void recvEMIF(const void * address, unsigned char * image)
+void recvEMIF(unsigned short * address, unsigned char * image)
 {
 	int i,j;
-	unsigned short *p = address;
 	unsigned short temp;
 	unsigned char low;
 	unsigned char high;
-	for(i=0;i<IMG_SIZE/2;i++)
+	for(i=0;i<IMG_ACTUAL_HEIGHT;i++)
+	for(j=0;j<IMG_ACTUAL_WIDTH/2;j++)
 	{
-		temp = p[i];
+		temp = address[i];
 		low = temp&0xff;
 		high = temp>>8;
-		image[2*i] = low;
-		image[2*i+1] = high;
+		if(i>=(IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2&&i<(IMG_ACTUAL_HEIGHT + IMG_HEIGHT)/2
+			&&j>=(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4&&j<(IMG_ACTUAL_WIDTH + IMG_WIDTH)/4)
+		{
+			image[(i - (IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2)*IMG_WIDTH + 2*(j-(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4)] = low;
+			image[(i - (IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2)*IMG_WIDTH + 2*(j-(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4) +1] = high;
+		}
 	}
+}
+
+void setInstructions(Pose *pose)
+{
+	static unsigned short group = 0;
+	int i,j;
+	double *info = pose;
+	unsigned char *pChar;
+
+	for(i=0;i<6;i++)
+	{
+		pChar = &instructions[i];
+		instructions[i].head = 0x90EB;
+		instructions[i].unused = 0;
+		instructions[i].group = group;
+		instructions[i].status.FarStatus = 1;
+		instructions[i].status.NearLStatus = 1;
+		instructions[i].status.NearRStatus = 1;
+		instructions[i].status.GlobalStatus = 1;
+		instructions[i].status.Unused = 0;
+		instructions[i].parameter = i+1;
+		instructions[i].info = info[i];
+		instructions[i].checksum = 0;
+		if(pose->T.Z <1500)
+			instructions[i].status.isInRange = 1;
+		else
+			instructions[i].status.isInRange = 0;
+			
+		for(j=0;j<6;j++)
+		{
+			instructions[i].checksum += pChar[j];
+		}
+		for(j=8;j<17;j++)
+		{
+			instructions[i].checksum += pChar[j];
+		}
+	}
+	DSP_blk_eswap16(instructions,instructionsBIG,72);
+	group++;
 }
 
 /**
@@ -64,8 +135,24 @@ void recvEMIF(const void * address, unsigned char * image)
  * @param address[IN/OUT] pointer to EMIF.
  * @param pose[IN] pointer to pose result. 
  */
-void sendEMIF(const void * address,const Pose * pose)
+void sendEMIF(unsigned short * address,const Pose * pose)
 {
-  memcpy(address,pose,sizeof(pose));
+	int i,j;
+	unsigned short *pShort;
+
+	setInstructions(pose);
+
+	for(i=0;i<6;i++)
+	{
+		pShort = &instructionsBIG[i];
+		for(j=0;j<3;j++)
+		{
+		address[j] = pShort[j];
+		}
+		for(j=4;j<9;j++)
+		{
+				address[j] = pShort[j];
+		}
+	}
 }
 
