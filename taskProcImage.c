@@ -5,7 +5,7 @@ void taskProcImage(UArg a0)
 {
         VLIB_CCHandle ccHandle;
         double points[3][TARGET_NUM];
-        Pose pose;
+        Pose pose = {{1/0,1/0,1/0},{1/0,1/0,1/0}};
         void *buffer_CC;
         int sizeCC;
         
@@ -22,13 +22,14 @@ void taskProcImage(UArg a0)
         connectedComponent(binary,&ccHandle,&buffer_CC,&sizeCC);
 
         //Blob Analysis
-        blob(&ccHandle,&points);
+        if(blob(&ccHandle,&points)<0)
+        goto emifSend;
 
         //Pose Calculation
         poseCalc(&points,&pose);
         
         //Send result
-        sendEMIF(emifSendAddr,&pose);
+        emifSend:sendEMIF(emifSendAddr,&pose);
 
         Memory_free(NULL,buffer_CC,sizeCC);
 }
