@@ -37,6 +37,7 @@ typedef struct
     double Y;
     double Z;
     double ratio;
+    double area;
 }Circle;
 
 typedef struct

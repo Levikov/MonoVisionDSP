@@ -22,6 +22,8 @@
 #define EMIF_POSE 0x74000000;
 #define EMIF_FLAG 0x78000000;
 
+#define MIN_AREA 100
+#define MAX_AREA 16384
 #define LINE_DETECT_THRESHOLD 0.98
 
 #define POSE_CALC_METHOD_MLE
@@ -55,7 +57,7 @@
 //#define PC_DEBUG
 
 #define FOCUS 12.5f
-#define DX 5.5e-3
-#define DY 5.5e-3
+#define DX 11e-3
+#define DY 11e-3
 
 #endif

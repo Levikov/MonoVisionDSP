@@ -2,36 +2,41 @@
 #include <float.h>
 #include <matop.h>
 
-double cmean(Circle *array,const int N)
+void cmean(Circle *array,const int N,double *restrict mean)
 {
-    double sum = 0;
+    double sum = 0,sumAera=0;
     int i;
     for(i=0;i<N;i++)
     {
         sum+=array[i].ratio;
+        sumAera+=array[i].area;
     }
-    return sum/(double)N;
+    mean[0] = sum/(double)N;
+    mean[1] = sumAera/(double)N;
 }
-double cvar(Circle *array,const double mean,const int N)
+void cvar(Circle *array,const double *mean,const int N,double *restrict var)
 {
-    double sum = 0;
+    double sum = 0,sumArea = 0;
     int i;
     for(i=0;i<N;i++)
     {
-        sum+= (array[i].ratio - mean)*(array[i].ratio - mean);
+        sum+= (array[i].ratio - mean[0])*(array[i].ratio - mean[0]);
+        sumArea+= (array[i].area - mean[1])*(array[i].area - mean[1]);
     }
-    return sqrtdp(sum);
+    var[0] = sqrtdp(sum);
+    var[1] = sqrtdp(sumArea);
 }
 
-void cmaxdev(Circle *array,const double mean,const double var,const int N,double *restrict maxdev,int *restrict maxdevidx)
+void cmaxdev(Circle *array,const double *mean,const double *var,const int N,double *restrict maxdev,int *restrict maxdevidx)
 {
-    double max = DBL_MIN,dev;
+    double max = 0,dev;
     int i,idx;
     for(i=0;i<N;i++)
     {
-        dev = abs(array[i].ratio - mean);
+        dev = fabs(array[i].ratio - mean[0])/var[0]*fabs(array[i].area - mean[1])/var[1];
         if(dev>max)
         {
+            max = dev;
             *maxdev = dev;
             *maxdevidx = i;   
         }
@@ -41,6 +46,15 @@ void cmaxdev(Circle *array,const double mean,const double var,const int N,double
 void swap(Circle *a,Circle *b)
 {
     Circle temp;
+    temp = *a;
+    *a = *b;
+    *b = temp;
+    return;
+}
+
+void swap_pCircle(Circle **a,Circle **b)
+{
+    Circle *temp;
     temp = *a;
     *a = *b;
     *b = temp;
@@ -94,27 +108,31 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
         VLIB_createBlobIntervalImg(ccHandle,(AVMii *)pBuf,&blob.blobList[i]);
         VLIB_getCCFeatures(ccHandle,&cc,i);
         VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,(AVMii *)pBuf,pBufCCMap,&perimeter);
+        if(cc.area>MAX_AREA)
+        circles[i].ratio = DBL_MAX;
+        else
         circles[i].ratio =(double)(perimeter*perimeter)/cc.area;
         circles[i].X = (double)cc.xsum/cc.area;
         circles[i].Y = (double)cc.ysum/cc.area;
         circles[i].Z = 1;
+        circles[i].area = cc.area;
     }
     rank(circles,n);
-    double mean,var,maxvar;
+    double mean[2],var[2],maxvar;
     int maxvaridx;
     for(i=TARGET_NUM;i<n;i++)
     {
-        mean =cmean(circles,TARGET_NUM);
-        var  = cvar(circles,mean,TARGET_NUM);
+        cmean(circles,TARGET_NUM,mean);
+        cvar(circles,mean,TARGET_NUM,var);
         cmaxdev(circles,mean,var,TARGET_NUM,&maxvar,&maxvaridx);
-        if(maxvar<3*var)break;
+        if(maxvar<1&&var[0]<3&&var[1]<0.5*mean[1])break;
         else
         {
             swap(circles+maxvaridx,circles+i);
         }
     }
 
-    if(maxvar>=3*var)
+    if(maxvar>=1||var[0]>=3||var[1]>=0.5*mean[1])
     {
         status = -2;
         goto end;
@@ -137,6 +155,9 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
 
     int flag = 1;
     status = -3;
+    Circle *aux[TARGET_NUM];
+    for(i=0;i<TARGET_NUM;i++)
+        aux[i] = circles + i;
     for(i=0;i<TARGET_NUM&&flag;i++)
     for(j=0;j<TARGET_NUM&&flag;j++)
     {
@@ -146,7 +167,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
             if(k==j||k==i)continue;
             else
             {
-                double product = (varX[j*n+i]*varX[k*n+j]+varY[j*n+i]*varY[k*n+j])/dist[j*n+i]/dist[k*n+j];
+                double product = (varX[j*TARGET_NUM+i]*varX[k*TARGET_NUM+j]+varY[j*TARGET_NUM+i]*varY[k*TARGET_NUM+j])/dist[j*TARGET_NUM+i]/dist[k*TARGET_NUM+j];
                 if(product>LINE_DETECT_THRESHOLD)
                 {
                         flag = 0;
@@ -158,9 +179,11 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     }
     if(flag)goto end;
 
-    swap(circles,circles+i-1);
-    swap(circles+1,circles+j-1);
-    swap(circles+2,circles+k-1);
+    swap(circles,aux[i-1]);
+    swap_pCircle(aux,aux+i-1);
+    swap(circles+1,aux[j-1]);
+    swap_pCircle(aux+1,aux+j-1);
+    swap(circles+2,aux[k-1]);
 
     double vec_a[3],vec_b[3],vec_c[3];
     vec_a[0] = circles[2].X - circles[0].X;
