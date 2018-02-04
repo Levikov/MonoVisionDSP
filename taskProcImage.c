@@ -16,7 +16,7 @@ void taskProcImage(UArg a0)
         IMG_thr_le2min_8(image,threshold,IMG_WIDTH,IMG_HEIGHT,IMG_THRES);
 
         //Binarize
-        binarize(threshold,binary);
+        VLIB_packMask32(threshold,binary,IMG_SIZE);
 
         //Connected component analysis
         connectedComponent(binary,&ccHandle,&buffer_CC,&sizeCC);

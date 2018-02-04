@@ -132,6 +132,9 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
         }
     }
 
+    cmean(circles,TARGET_NUM,mean);
+    cvar(circles,mean,TARGET_NUM,var);
+    cmaxdev(circles,mean,var,TARGET_NUM,&maxvar,&maxvaridx);
     if(maxvar>=1||var[0]>=3||var[1]>=0.5*mean[1])
     {
         status = -2;
@@ -194,9 +197,18 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     vec_b[2] = 0;
 
     DSPF_dp_vec_cross(vec_a,vec_b,vec_c);
-    if(vec_c[2]>0)
+    if(vec_c[2]<0)
     swap(circles,circles+2);
 
+    vec_a[0] = circles[3].X - circles[0].X;
+    vec_a[1] = circles[3].Y - circles[0].Y;
+    vec_a[2] = 0;
+    vec_b[0] = circles[4].X - circles[0].X;
+    vec_b[1] = circles[4].Y - circles[0].Y;
+    vec_b[2] = 0;
+    DSPF_dp_vec_cross(vec_a,vec_b,vec_c);
+    if(vec_c[2]>0)
+    swap(circles+3,circles+4);
 
     for(i=0;i<TARGET_NUM;i++)
     {
