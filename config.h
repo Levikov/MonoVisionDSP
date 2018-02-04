@@ -3,17 +3,22 @@
 
 #define PI 3.14159265358979323846
 
+#define CAMERA_NEAR_L
+//#define CAMERA_NEAR_R
+//#define CAMERA_FAR
+//#define CAMERA_GLOBAL
+
 #define IMG_ACTUAL_WIDTH 876
 #define IMG_ACTUAL_HEIGHT 876
 #define IMG_ACTUAL_SIZE 767376
 #define IMG_WIDTH 864
 #define IMG_HEIGHT 864
 #define IMG_SIZE 746496
-#define IMG_THRES 50
+#define IMG_THRES 200
 
 #define IMG_BUFFER_SIZE 8
 
-#define TARGET_NUM 4
+#define TARGET_NUM 5
 
 #define CORE_NUM 8
 #define CLOCK_TICK_TIMEOUT 250000
@@ -56,8 +61,8 @@
 
 //#define PC_DEBUG
 
-#define FOCUS 12.5f
-#define DX 11e-3
-#define DY 11e-3
+#define FOCUS 24.0f
+#define DX 0.01808449074074074074074074074074
+#define DY 0.01798362107127047366091190792386
 
 #endif

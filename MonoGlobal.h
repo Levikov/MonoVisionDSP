@@ -92,7 +92,7 @@ extern char blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
 extern void generateCoordinates(Pose pose,double (*restrict p)[4][TARGET_NUM]);
 extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
 extern void recvEMIF(unsigned short * address, unsigned char* image);
-extern void sendEMIF(unsigned short * address, const Pose * pose);
+extern void sendEMIF(unsigned short * address, const Pose * pose,const char status);
 extern void EMIF_init();
 
 

@@ -90,7 +90,7 @@ void recvEMIF(unsigned short * address, unsigned char * image)
 	}
 }
 
-void setInstructions(const Pose *pose)
+void setInstructions(const Pose *pose,const char status)
 {
 	static unsigned short group = 0;
 	int i,j;
@@ -107,8 +107,32 @@ void setInstructions(const Pose *pose)
 		instructions[i].status.NearLStatus = 1;
 		instructions[i].status.NearRStatus = 1;
 		instructions[i].status.GlobalStatus = 1;
+		if(status<0)
+		#ifdef CAMERA_FAR
+		instructions[i].status.FarStatus = 0;
+		#endif
+		#ifdef CAMERA_NEAR_L
+		instructions[i].status.NearLStatus = 0;
+		#endif
+		#ifdef CAMERA_NEAR_R
+		instructions[i].status.NearRStatus = 0;
+		#endif
+		#ifdef CAMERA_GLOBAL
+		instructions[i].status.GlobalStatus = 0;
+		#endif
 		instructions[i].status.Unused = 0;
-		instructions[i].parameter = i+1;
+		#ifdef CAMERA_FAR
+		instructions[i].parameter = i+1+0x00;
+		#endif
+		#ifdef CAMERA_NEAR_L
+		instructions[i].parameter = i+1+0x10;
+		#endif
+		#ifdef CAMERA_NEAR_R
+		instructions[i].parameter = i+1+0x16;
+		#endif
+		#ifdef CAMERA_GLOBAL
+		instructions[i].parameter = i+1+0x06;
+		#endif
 		instructions[i].info = info[i];
 		instructions[i].checksum = 0;
 		if(pose->T.Z <1500)
@@ -135,12 +159,12 @@ void setInstructions(const Pose *pose)
  * @param address[IN/OUT] pointer to EMIF.
  * @param pose[IN] pointer to pose result. 
  */
-void sendEMIF(unsigned short * address,const Pose * pose)
+void sendEMIF(unsigned short * address,const Pose * pose,const char status)
 {
 	int i,j;
 	unsigned short *pShort;
 
-	setInstructions(pose);
+	setInstructions(pose,status);
 
 	for(i=0;i<6;i++)
 	{
