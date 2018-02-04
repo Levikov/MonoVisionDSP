@@ -1,9 +1,10 @@
 #include <MonoGlobal.h>
-
-void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char ** bufferCC,int * size)
+#pragma DATA_ALIGN(buffer_CC,8)
+unsigned char buffer_CC[20032996];
+void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle)
 {
-        VLIB_calcConnectedComponentsMaxBufferSize(IMG_WIDTH,IMG_HEIGHT,MIN_AREA,size);
-        *bufferCC = Memory_alloc(NULL,*size,8,NULL);
-        VLIB_initConnectedComponentsList(ccHandle,*bufferCC, *size);
+        int size;
+        VLIB_calcConnectedComponentsMaxBufferSize(IMG_WIDTH,IMG_HEIGHT,MIN_AREA,&size);
+        VLIB_initConnectedComponentsList(ccHandle,buffer_CC, size);
         VLIB_createConnectedComponentsList(ccHandle,IMG_WIDTH, IMG_HEIGHT,binary,MIN_AREA, 1);
 }

@@ -85,9 +85,9 @@ extern unsigned char debug_img[];
 extern double debug_pos[3][4];
 
 //===========Function Declaration=======//
-extern void taskProcImage(UArg a0);
+extern void taskProcImage();
 extern void binarize(const unsigned char *p,unsigned int *q);
-extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle,unsigned char ** bufferCC,int * size);
+extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle);
 extern char blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
 extern void generateCoordinates(Pose pose,double (*restrict p)[4][TARGET_NUM]);
 extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
