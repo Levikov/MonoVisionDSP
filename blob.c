@@ -96,12 +96,22 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     VLIB_createCCMap8Bit(ccHandle,pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
     int n = blob.numBlobs;
-    if(blob.numBlobs<TARGET_NUM)
-    {
-        status = -1;
-        goto end;
-    }
     Circle * circles = malloc(n*sizeof(Circle));
+    double *varX = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
+    double *varY = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
+    double *dist = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
+   if(blob.numBlobs<TARGET_NUM)
+   {
+       status = -1;
+       free(varX);
+       free(varY);
+       free(dist);
+       Memory_free(NULL,pBuf,size);
+       Memory_free(NULL,pBufCCMap,IMG_SIZE);
+       free(blob.blobList);
+       free(circles);
+       return status;
+   }
     for(i=0;i<blob.numBlobs;i++)
     {
         VLIB_CC cc;
@@ -142,9 +152,6 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     }
 
 
-    double *varX = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
-    double *varY = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
-    double *dist = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
 
     int k=0;
     for(i=0;i<TARGET_NUM;i++)
@@ -216,6 +223,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
         (*points)[1][i] = circles[i].Y; 
         (*points)[2][i] = circles[i].Z; 
     }
+end:
     free(varX);
     free(varY);
     free(dist);
@@ -224,5 +232,5 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     free(blob.blobList);
     free(circles);
 
-    end:return status;
+    return status;
 }
