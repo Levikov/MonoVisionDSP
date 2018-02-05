@@ -2,6 +2,7 @@
 #define MONOGLOBAL_H
 
 #include <c6x.h>
+#include <stdio.h>
 #include <string.h>
 
 #include <xdc/std.h>
@@ -90,6 +91,9 @@ extern void binarize(const unsigned char *p,unsigned int *q);
 extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle);
 extern char blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
 extern void generateCoordinates(Pose pose,double (*restrict p)[4][TARGET_NUM]);
+#ifdef POSE_CALC_TEST
+extern void poseCalcTest();
+#endif
 extern void poseCalc(const double (* points)[3][TARGET_NUM],Pose *pose);
 extern void recvEMIF(unsigned short * address, unsigned char* image);
 extern void sendEMIF(unsigned short * address, const Pose * pose,const char status);

@@ -49,12 +49,16 @@ double p[4][TARGET_NUM] = {0};
 Int main()
 { 
     Error_Block eb;
-    System_printf("enter main()\n");
     Error_init(&eb);
-   	EMIF_init();//use nand cfg
-	//configure for non-loopback test, and use CPU for TX
+   	EMIF_init();
 	KeyStone_UART_config(115200, FALSE, UART_USE_CORE_TO_TX);
 	KeyStone_UART_Interrupts_Init(TRUE, FALSE);//UART interrupt en,DMA disable
+#ifndef POSE_CALC_TEST
+    printf("Real Image Test\n");
+    printf("======================================================================\n");
+    printf("case\tpitch\troll\tyaw\tX\tY\tZ\tstatus\n");
+    printf("----------------------------------------------------------------------\n");
+#endif
     BIOS_start();
     return(0);
 }
