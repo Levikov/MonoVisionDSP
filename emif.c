@@ -84,8 +84,8 @@ void recvEMIF(unsigned short * address, unsigned char * image)
 		if(i>=(IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2&&i<(IMG_ACTUAL_HEIGHT + IMG_HEIGHT)/2
 			&&j>=(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4&&j<(IMG_ACTUAL_WIDTH + IMG_WIDTH)/4)
 		{
-			image[(i - (IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2)*IMG_WIDTH + 2*(j-(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4)] = low;
-			image[(i - (IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2)*IMG_WIDTH + 2*(j-(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4) +1] = high;
+			image[(i - (IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2)*IMG_WIDTH + 2*(j-(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4)] = high;
+			image[(i - (IMG_ACTUAL_HEIGHT - IMG_HEIGHT)/2)*IMG_WIDTH + 2*(j-(IMG_ACTUAL_WIDTH - IMG_WIDTH)/4) +1] = low;
 		}
 	}
 }
