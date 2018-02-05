@@ -85,7 +85,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     int i=0,j=0;
     unsigned int size;
     int cnt;
-    char status = 1;
+    char status = 0;
     VLIB_blobList blob;
     VLIB_getNumCCs(ccHandle,&cnt);
     blob.blobList = malloc(cnt*sizeof(VLIB_blob));
@@ -102,7 +102,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     double *dist = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
    if(blob.numBlobs<TARGET_NUM)
    {
-       status = -1;
+       status = 1;
        free(varX);
        free(varY);
        free(dist);
@@ -147,7 +147,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     cmaxdev(circles,mean,var,TARGET_NUM,&maxvar,&maxvaridx);
     if(maxvar>=1||var[0]>=3||var[1]>=0.5*mean[1])
     {
-        status = -2;
+        status = 2;
         goto end;
     }
 
@@ -164,7 +164,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     }
 
     int flag = 1;
-    status = -3;
+    status = 3;
     Circle *aux[TARGET_NUM];
     for(i=0;i<TARGET_NUM;i++)
         aux[i] = circles + i;
@@ -181,7 +181,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
                 if(product>LINE_DETECT_THRESHOLD)
                 {
                         flag = 0;
-                        status = 1;
+                        status = 0;
                 }
                 else continue;
             }

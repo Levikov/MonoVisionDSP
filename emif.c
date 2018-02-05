@@ -107,7 +107,7 @@ void setInstructions(const Pose *pose,const char status)
 		instructions[i].status.NearLStatus = 1;
 		instructions[i].status.NearRStatus = 1;
 		instructions[i].status.GlobalStatus = 1;
-		if(status<0)
+		if(status)
 		#ifdef CAMERA_FAR
 		instructions[i].status.FarStatus = 0;
 		#endif

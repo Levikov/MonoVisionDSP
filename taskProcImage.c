@@ -12,7 +12,7 @@ void taskProcImage()
         recvEMIF(emifRecvAddr,image);
 
         //Threshold
-        IMG_thr_le2min_8(debug_img,threshold,IMG_WIDTH,IMG_HEIGHT,IMG_THRES);
+        IMG_thr_le2min_8(image,threshold,IMG_WIDTH,IMG_HEIGHT,IMG_THRES);
 
         //Binarize
         VLIB_packMask32(threshold,binary,IMG_SIZE);
@@ -22,7 +22,7 @@ void taskProcImage()
 
         //Blob Analysis
         status = blob(&ccHandle,&points);
-        if(status<0)
+        if(status)
         goto emifSend;
 
         //Pose Calculation
