@@ -1,7 +1,7 @@
 #include <MonoGlobal.h>
 #include <float.h>
 #include <matop.h>
-
+#include <motionPredict.h>
 void cmean(Circle *array,const int N,double *restrict mean)
 {
     double sum = 0,sumAera=0;
@@ -30,7 +30,7 @@ void cvar(Circle *array,const double *mean,const int N,double *restrict var)
 void cmaxdev(Circle *array,const double *mean,const double *var,const int N,double *restrict maxdev,int *restrict maxdevidx)
 {
     double max = 0,dev;
-    int i,idx;
+    int i;
     for(i=0;i<N;i++)
     {
         dev = fabs(array[i].ratio - mean[0])/var[0]*fabs(array[i].area - mean[1])/var[1];
@@ -80,9 +80,27 @@ void rank(Circle *array,const int N)
     }
 }
 
-char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
+void kalmanRank(Circle *circles,const int N,double *kalmanImageCenter)
 {
-    int i=0,j=0;
+    double *dist = malloc(N*sizeof(double));
+    int i,j;
+    for(i=0;i<N;i++)
+    dist[i] = (circles[i].X - kalmanImageCenter[0])*(circles[i].X - kalmanImageCenter[0]) + (circles[i].Y - kalmanImageCenter[1])*(circles[i].Y - kalmanImageCenter[1]);
+    for(i=0;i<N-1;i++)
+    {
+        for(j=i+1;j<N;j++)
+        if(dist[i]>dist[j])
+        {
+            swap_f64(dist+i,dist+j);
+            swap(circles+i,circles+j);
+        }
+    }  
+
+}
+
+unsigned char getTargets(VLIB_CCHandle *ccHandle,Circle **circles,int *restrict N)
+{
+    int i=0;
     unsigned int size;
     int cnt;
     char status = 0;
@@ -96,46 +114,64 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     VLIB_createCCMap8Bit(ccHandle,pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
     int n = blob.numBlobs;
-    Circle * circles = malloc(n*sizeof(Circle));
-    double *varX = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
-    double *varY = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
-    double *dist = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
-   if(blob.numBlobs<TARGET_NUM)
-   {
-       status = 1;
-       free(varX);
-       free(varY);
-       free(dist);
-       Memory_free(NULL,pBuf,size);
-       Memory_free(NULL,pBufCCMap,IMG_SIZE);
-       free(blob.blobList);
-       free(circles);
-       return status;
-   }
+    *N = n;
+    *circles = malloc(n*sizeof(Circle));
+    if(blob.numBlobs<TARGET_NUM)
+    {
+        status = 1;
+        goto end;
+    }
     for(i=0;i<blob.numBlobs;i++)
     {
         VLIB_CC cc;
         VLIB_createBlobIntervalImg(ccHandle,(AVMii *)pBuf,&blob.blobList[i]);
         VLIB_getCCFeatures(ccHandle,&cc,i);
         VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,(AVMii *)pBuf,pBufCCMap,&perimeter);
-        if(cc.area>MAX_AREA)
-        circles[i].ratio = DBL_MAX;
-        else
-        circles[i].ratio =(double)(perimeter*perimeter)/cc.area;
-        circles[i].X = (double)cc.xsum/cc.area;
-        circles[i].Y = (double)cc.ysum/cc.area;
-        circles[i].Z = 1;
-        circles[i].area = cc.area;
+        (*circles)[i].ratio =(double)(perimeter*perimeter)/cc.area;
+        (*circles)[i].X = (double)cc.xsum/cc.area;
+        (*circles)[i].Y = (double)cc.ysum/cc.area;
+        (*circles)[i].Z = 1;
+        (*circles)[i].area = cc.area;
     }
-    rank(circles,n);
+
+end:
+    Memory_free(NULL,pBuf,size);
+    Memory_free(NULL,pBufCCMap,IMG_SIZE);
+    free(blob.blobList);
+    return status;
+}
+
+unsigned char selectTargets(Circle *circles,const int N)
+{
+    int i;
+    unsigned char status = ERROR_NORM;
+    double kalmanCenter[3];
+    double kalmanImageCenter[3] = {0};
+    double kalmanRadius = 150;
+    if(kalmanFlag)
+    {
+        motionPredict(kalmanCenter);
+        kalmanCenter[0] = kalmanCenter[0]/kalmanCenter[2];
+        kalmanCenter[1] = kalmanCenter[1]/kalmanCenter[2];
+        kalmanCenter[2] = 1;
+        DSPF_dp_mat_mul_any(M,1,3,3,kalmanCenter,1,kalmanImageCenter);
+        kalmanRank(circles,N,kalmanImageCenter);
+    }
+    else
+    {
+        rank(circles,N);
+    }
+
+    
+
     double mean[2],var[2],maxvar;
     int maxvaridx;
-    for(i=TARGET_NUM;i<n;i++)
+    for(i=TARGET_NUM;i<N;i++)
     {
         cmean(circles,TARGET_NUM,mean);
         cvar(circles,mean,TARGET_NUM,var);
         cmaxdev(circles,mean,var,TARGET_NUM,&maxvar,&maxvaridx);
-        if(maxvar<1&&var[0]<3&&var[1]<0.3*mean[1])break;
+        if(maxvar<1&&var[1]<0.3*mean[1])break;
         else
         {
             swap(circles+maxvaridx,circles+i);
@@ -145,15 +181,23 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
     cmean(circles,TARGET_NUM,mean);
     cvar(circles,mean,TARGET_NUM,var);
     cmaxdev(circles,mean,var,TARGET_NUM,&maxvar,&maxvaridx);
-    if(maxvar>=1||var[0]>=3||var[1]>=0.5*mean[1])
+    if(maxvar>=1||var[1]>=0.5*mean[1])
     {
-        status = 2;
-        goto end;
+    status = 2;
+    goto end;
     }
+end:
+    return status;
+}
 
+unsigned char filterTargets(Circle *circles,double (* restrict points)[3][TARGET_NUM])
+{
+    unsigned char status = ERROR_NORM;
+    int i,j,k=0;
+    double *varX = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
+    double *varY = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
+    double *dist = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
 
-
-    int k=0;
     for(i=0;i<TARGET_NUM;i++)
     for(j=0;j<TARGET_NUM;j++)
     {
@@ -227,10 +271,23 @@ end:
     free(varX);
     free(varY);
     free(dist);
-    Memory_free(NULL,pBuf,size);
-    Memory_free(NULL,pBufCCMap,IMG_SIZE);
-    free(blob.blobList);
-    free(circles);
+    return status;
+}
 
+
+
+unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
+{
+    Circle *circles;
+    int N;
+    unsigned char status = ERROR_NORM;
+    status = getTargets(ccHandle,&circles,&N);
+    if(status)goto end;
+    status = selectTargets(circles,N);
+    if(status)goto end;
+    status = filterTargets(circles,points);
+    if(status)goto end;
+end:
+    free(circles);
     return status;
 }

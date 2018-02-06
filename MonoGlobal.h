@@ -81,15 +81,22 @@ extern double points[3][TARGET_NUM];
 extern const double M[3][3];
 extern const double P[4][TARGET_NUM];
 extern double p[4][TARGET_NUM];
+extern Pose poseLastCorrect;
+extern VLIB_kalmanFilter_4x6_F32 KF;
 
+#ifdef DEBUG
 extern unsigned char debug_img[];
 extern double debug_pos[3][4];
+extern double debug_total_cnt;
+extern double debug_total_detected;
+extern double debug_detection_rate;
+#endif
 
 //===========Function Declaration=======//
 extern void taskProcImage();
 extern void binarize(const unsigned char *p,unsigned int *q);
 extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle);
-extern char blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
+extern unsigned char blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
 extern void generateCoordinates(Pose pose,double (*restrict p)[4][TARGET_NUM]);
 #ifdef POSE_CALC_TEST
 extern void poseCalcTest();

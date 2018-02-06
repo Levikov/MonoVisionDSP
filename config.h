@@ -3,7 +3,6 @@
 
 #define PI 3.14159265358979323846
 
-#define DEBUG
 #define CAMERA_NEAR_L
 //#define CAMERA_NEAR_R
 //#define CAMERA_FAR
@@ -31,6 +30,12 @@
 #define MIN_AREA 30
 #define MAX_AREA 16384
 #define LINE_DETECT_THRESHOLD 0.98
+
+#define ERROR_NORM 0
+#define ERROR_FEWTAR 1
+#define ERROR_NOTAR 2
+#define ERROR_NOLINE 3
+#define ERROR_POSERR 4
 
 #define POSE_CALC_METHOD_MLE
 #define POSE_CALC_METHOD_MLE_EPSILON 1.0f

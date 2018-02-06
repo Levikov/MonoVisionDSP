@@ -35,8 +35,8 @@ const double M[3][3] = {FOCUS/DX,0,IMG_WIDTH/2,
 //Target Location Matrix
 #pragma DATA_ALIGN(P, 8)
 const double P[4][TARGET_NUM] = 
-{0, -90, -200,  0, -90,
- 0,   0,    0,-75, -75,
+{76,  -14,  -124,  76,   -14,
+ 30,    30,    30,   -45,   -45,
  1,   1,    1,  1,   1,
  0,   0,    0,  0,   0};
 

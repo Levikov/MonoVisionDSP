@@ -1,9 +1,10 @@
 #include <MonoGlobal.h>
 #include <string.h>
+#include <motionPredict.h>
 
+Pose poseLastCorrect;
 #ifdef DEBUG
 const char *status_string[5] = {"NORM","FEWTAR","NOTAR","NOLINE","POSERR"};
-Pose debug_pose;
 double debug_total_cnt = 0;
 double debug_total_detected = 0;
 double debug_detection_rate = 0;
@@ -62,7 +63,24 @@ void taskProcImage()
                 debug_detection_rate
                 );
 #endif
-        if(!status)debug_pose = pose;
+        if(!status)
+        {
+                poseLastCorrect = pose;
+                if(!kalmanFlag)
+                {
+                        motionPredictInit(&poseLastCorrect.T);
+                        kalmanFlag = 1;
+                }
+                else
+                {
+                        motionPredictCorrect(&poseLastCorrect.T);
+                        kalmanFlag = 1;
+                }
+        }
+        else
+        {
+                kalmanFlag = 0;
+        }
         }
 #else
         poseCalcTest();
