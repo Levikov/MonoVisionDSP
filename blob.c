@@ -135,7 +135,7 @@ char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
         cmean(circles,TARGET_NUM,mean);
         cvar(circles,mean,TARGET_NUM,var);
         cmaxdev(circles,mean,var,TARGET_NUM,&maxvar,&maxvaridx);
-        if(maxvar<1&&var[0]<3&&var[1]<0.5*mean[1])break;
+        if(maxvar<1&&var[0]<3&&var[1]<0.3*mean[1])break;
         else
         {
             swap(circles+maxvaridx,circles+i);

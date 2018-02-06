@@ -18,10 +18,12 @@ void evaluatePoseCalc(Pose start,Pose dev,Pose end,double sigma,unsigned int tes
     fprintf(pFile,"case\tpitch\troll\tyaw\tX\tY\tZ\tpitch'\troll'\tyaw'\tX'\tY'\tZ'\n");
     fprintf(pFile,"-----------------------------------------------------------------------------------------------------\n");
 #endif
+#ifdef PRINT_CONSOLE
     printf("%s with sigma = %.2f\n",title,sigma);
     printf("=====================================================================================================\n");
     printf("case\tpitch\troll\tyaw\tX\tY\tZ\tpitch'\troll'\tyaw'\tX'\tY'\tZ'\n");
     printf("-----------------------------------------------------------------------------------------------------\n");
+#endif
     int i=0,j,k;
     void *poly = malloc(3);
     void *state = malloc(7);
@@ -107,6 +109,7 @@ void evaluatePoseCalc(Pose start,Pose dev,Pose end,double sigma,unsigned int tes
             sqrtdp(error[5]/i)
             );
 #endif
+#ifdef PRINT_CONSOLE
     printf("-----------------------------------------------------------------------------------------------------\n");
     printf("RMSE\t - \t - \t - \t - \t - \t - \t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\n",
             sqrtdp(error[0]/i),
@@ -116,12 +119,15 @@ void evaluatePoseCalc(Pose start,Pose dev,Pose end,double sigma,unsigned int tes
             sqrtdp(error[4]/i),
             sqrtdp(error[5]/i)
             );
+#endif
 #ifdef PRINT_FILE
     fprintf(pFile,"=====================================================================================================\n");
     fprintf(pFile,"\n");
 #endif
+#ifdef PRINT_CONSOLE
     printf("=====================================================================================================\n");
     printf("\n");
+#endif
     free(poly);
     free(state);
 }

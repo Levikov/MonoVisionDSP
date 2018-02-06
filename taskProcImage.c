@@ -2,6 +2,7 @@
 #include <string.h>
 
 const char *status_string[4] = {"NORM","FEWTAR","NOTAR","NOLINE"};
+Pose debug_pose;
 
 void taskProcImage()
 {
@@ -39,6 +40,7 @@ void taskProcImage()
         //Send result
         emifSend:
         sendEMIF(emifSendAddr,&pose,status);
+#ifdef PRINT_CONSOLE
         printf("%d\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%s\n",
                 i,
                 pose.R.pitch,
@@ -49,7 +51,9 @@ void taskProcImage()
                 pose.T.Z,
                 status_string[status]
                 );
+#endif
         }
+        if(!status)debug_pose = pose;
 #else
         poseCalcTest();
 #endif

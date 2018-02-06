@@ -54,10 +54,12 @@ Int main()
 	KeyStone_UART_config(115200, FALSE, UART_USE_CORE_TO_TX);
 	KeyStone_UART_Interrupts_Init(TRUE, FALSE);//UART interrupt en,DMA disable
 #ifndef POSE_CALC_TEST
+#ifdef PRINT_CONSOLE
     printf("Real Image Test\n");
     printf("======================================================================\n");
     printf("case\tpitch\troll\tyaw\tX\tY\tZ\tstatus\n");
     printf("----------------------------------------------------------------------\n");
+#endif
 #endif
     BIOS_start();
     return(0);
