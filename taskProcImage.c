@@ -1,9 +1,13 @@
 #include <MonoGlobal.h>
 #include <string.h>
 
-const char *status_string[4] = {"NORM","FEWTAR","NOTAR","NOLINE","ERROR"};
+#ifdef DEBUG
+const char *status_string[5] = {"NORM","FEWTAR","NOTAR","NOLINE","POSERR"};
 Pose debug_pose;
-
+double debug_total_cnt = 0;
+double debug_total_detected = 0;
+double debug_detection_rate = 0;
+#endif
 void taskProcImage()
 {
 #ifndef POSE_CALC_TEST
@@ -43,7 +47,10 @@ void taskProcImage()
         emifSend:
         sendEMIF(emifSendAddr,&pose,status);
 #ifdef PRINT_CONSOLE
-        printf("%d\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%s\n",
+        debug_total_cnt++;
+        if(!status)debug_total_detected++;
+        debug_detection_rate = debug_total_detected / debug_total_cnt *100;
+        printf("%d\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%s\t%.2f%%\n",
                 i,
                 pose.R.pitch,
                 pose.R.roll,
@@ -51,7 +58,8 @@ void taskProcImage()
                 pose.T.X,
                 pose.T.Y,
                 pose.T.Z,
-                status_string[status]
+                status_string[status],
+                debug_detection_rate
                 );
 #endif
         if(!status)debug_pose = pose;
