@@ -4,10 +4,12 @@
 
 Pose poseLastCorrect;
 #ifdef DEBUG
-const char *status_string[5] = {"NORM","FEWTAR","NOTAR","NOLINE","POSERR"};
+const char *status_string[6] = {"NORM","FEWTAR","NOTAR","NOLINE","POSERR","TIMEOUT"};
 double debug_total_cnt = 0;
 double debug_total_detected = 0;
 double debug_detection_rate = 0;
+double debug_time = 0;
+double debug_interval = 0;
 #endif
 void taskProcImage()
 {

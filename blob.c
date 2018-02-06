@@ -69,33 +69,31 @@ void swap_f64(double *a,double *b)
     *b = temp;
     return;
 }
-void rank(Circle *array,const int N)
+
+int rankByRatio(const void *a,const void *b)
 {
-    int i,j;
-    for(i=0;i<N-1;i++)
-    {
-        for(j=i+1;j<N;j++)
-        if(array[i].ratio>array[j].ratio)
-        swap(array+i,array+j);
-    }
+    Circle *ca = (Circle *)a;
+    Circle *cb = (Circle *)b;
+    if(ca->ratio<cb->ratio)return -1;
+    if(ca->ratio>cb->ratio)return 1;
+    else return 0;
+}
+
+int rankByKalmanDist(const void *a,const void *b)
+{
+    Circle *ca = (Circle *)a;
+    Circle *cb = (Circle *)b;
+    if(ca->kalmanDist<cb->kalmanDist)return -1;
+    if(ca->kalmanDist>cb->kalmanDist)return 1;
+    else return 0;
 }
 
 void kalmanRank(Circle *circles,const int N,double *kalmanImageCenter)
 {
-    double *dist = malloc(N*sizeof(double));
-    int i,j;
+    register int i,j;
     for(i=0;i<N;i++)
-    dist[i] = (circles[i].X - kalmanImageCenter[0])*(circles[i].X - kalmanImageCenter[0]) + (circles[i].Y - kalmanImageCenter[1])*(circles[i].Y - kalmanImageCenter[1]);
-    for(i=0;i<N-1;i++)
-    {
-        for(j=i+1;j<N;j++)
-        if(dist[i]>dist[j])
-        {
-            swap_f64(dist+i,dist+j);
-            swap(circles+i,circles+j);
-        }
-    }  
-
+    circles[i].kalmanDist = (circles[i].X - kalmanImageCenter[0])*(circles[i].X - kalmanImageCenter[0]) + (circles[i].Y - kalmanImageCenter[1])*(circles[i].Y - kalmanImageCenter[1]);
+    qsort(circles,N,sizeof(Circle),&rankByKalmanDist);
 }
 
 unsigned char getTargets(VLIB_CCHandle *ccHandle,Circle **circles,int *restrict N)
@@ -159,7 +157,7 @@ unsigned char selectTargets(Circle *circles,const int N)
     }
     else
     {
-        rank(circles,N);
+        qsort(circles,N,sizeof(Circle),&rankByRatio);
     }
 
     

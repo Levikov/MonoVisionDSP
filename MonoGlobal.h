@@ -39,6 +39,7 @@ typedef struct
     double Z;
     double ratio;
     double area;
+    double kalmanDist;
 }Circle;
 
 typedef struct

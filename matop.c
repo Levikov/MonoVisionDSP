@@ -7,7 +7,7 @@
  */
 void DSPF_dp_mat_trans_local(double *restrict x, const int N)
 {
-  int i,j = 0;
+  register int i,j = 0;
   double temp;
   for(i = 0;i < N;i++)
    for(j = i+1;j < N;j++)
@@ -47,7 +47,7 @@ void DSPF_dp_vec_cross(double *x1, double *x2, double *restrict y)
 void DSPF_dp_mat_linear_comb(double *x1, double alpha,double *x2, double beta, 
                             const int r, const int c, double *restrict y)
 {
-  int i,j;
+  register int i,j;
   for(i=0;i<r;i++)
   for(j=0;j<c;j++)
   {
@@ -81,7 +81,7 @@ void DSPF_dp_mat_inv(double *x,const int c, double * y)
 {
   double Y[3][3] = {0};
   double det = (x[0*c+0]*x[1*c+1]*x[2*c+2] - x[0*c+0]*x[1*c+2]*x[2*c+1] - x[0*c+1]*x[1*c+0]*x[2*c+2] + x[0*c+1]*x[1*c+2]*x[2*c+0] + x[0*c+2]*x[1*c+0]*x[2*c+1] - x[0*c+2]*x[1*c+1]*x[2*c+0]);
-  int i,j;
+  register int i,j;
   if(fabs(det)>1e-9)
   {
     Y[0][0] = (x[1*c+1]*x[2*c+2] - x[1*c+2]*x[2*c+1])/det;
@@ -114,7 +114,7 @@ void DSPF_dp_mat_inv(double *x,const int c, double * y)
 void DSPF_dp_mat_mul_any(double *x1,const double a, const int r1, const int c1,
     double *x2, const int c2, double * y)
 {
-  int i,j,k;
+  register int i,j,k;
   for(i=0;i<r1;i++)
   for(j=0;j<c1;j++)
   for(k=0;k<c2;k++)

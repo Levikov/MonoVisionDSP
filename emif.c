@@ -71,7 +71,7 @@ void EMIF_init()
  */
 void recvEMIF(unsigned short * address, unsigned char * image)
 {
-	int i,j;
+	register int i,j;
 	unsigned short temp;
 	unsigned char low;
 	unsigned char high;
@@ -93,7 +93,7 @@ void recvEMIF(unsigned short * address, unsigned char * image)
 void setInstructions(const Pose *pose,const char status)
 {
 	static unsigned short group = 0;
-	int i,j;
+	register int i,j;
 	double *info = (double *)pose;
 	unsigned char *pChar;
 
@@ -161,7 +161,7 @@ void setInstructions(const Pose *pose,const char status)
  */
 void sendEMIF(unsigned short * address,const Pose * pose,const char status)
 {
-	int i,j;
+	register int i,j;
 	unsigned short *pShort;
 
 	setInstructions(pose,status);
