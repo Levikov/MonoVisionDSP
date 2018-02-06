@@ -22,7 +22,7 @@ void simon_h(double *p, double *hx, int m, int n,void *adata)
   double H[3][3];
   double (*Y)[3][TARGET_NUM] = A[1];
   memset(hx,0,sizeof(double)*2*TARGET_NUM);
-  int i,j;
+  register int i,j;
   double Yhap[3][TARGET_NUM] = {0};
   for (i = 0; i < 3; i++)
   for (j = 0; j < 3; j++)
@@ -48,7 +48,7 @@ void simon_h(double *p, double *hx, int m, int n,void *adata)
 
 unsigned char poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
 {
-  int i,j,k;
+  register int i,j,k;
   unsigned char status = 0;
   double H[3][3];
   double invM[3][3];

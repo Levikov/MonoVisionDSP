@@ -5,7 +5,7 @@
 void cmean(Circle *array,const int N,double *restrict mean)
 {
     double sum = 0,sumAera=0;
-    int i;
+    register int i;
     for(i=0;i<N;i++)
     {
         sum+=array[i].ratio;
@@ -17,7 +17,7 @@ void cmean(Circle *array,const int N,double *restrict mean)
 void cvar(Circle *array,const double *mean,const int N,double *restrict var)
 {
     double sum = 0,sumArea = 0;
-    int i;
+    register int i;
     for(i=0;i<N;i++)
     {
         sum+= (array[i].ratio - mean[0])*(array[i].ratio - mean[0]);
@@ -30,7 +30,7 @@ void cvar(Circle *array,const double *mean,const int N,double *restrict var)
 void cmaxdev(Circle *array,const double *mean,const double *var,const int N,double *restrict maxdev,int *restrict maxdevidx)
 {
     double max = 0,dev;
-    int i;
+    register int i;
     for(i=0;i<N;i++)
     {
         dev = fabs(array[i].ratio - mean[0])/var[0]*fabs(array[i].area - mean[1])/var[1];
@@ -100,7 +100,7 @@ void kalmanRank(Circle *circles,const int N,double *kalmanImageCenter)
 
 unsigned char getTargets(VLIB_CCHandle *ccHandle,Circle **circles,int *restrict N)
 {
-    int i=0;
+    register int i=0;
     unsigned int size;
     int cnt;
     char status = 0;
@@ -143,7 +143,7 @@ end:
 
 unsigned char selectTargets(Circle *circles,const int N)
 {
-    int i;
+    register int i;
     unsigned char status = ERROR_NORM;
     double kalmanCenter[3];
     double kalmanImageCenter[3] = {0};
@@ -193,7 +193,7 @@ end:
 unsigned char filterTargets(Circle *circles,double (* restrict points)[3][TARGET_NUM])
 {
     unsigned char status = ERROR_NORM;
-    int i,j,k=0;
+    register int i,j,k=0;
     double *varX = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
     double *varY = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));
     double *dist = malloc(TARGET_NUM*TARGET_NUM*sizeof(double));

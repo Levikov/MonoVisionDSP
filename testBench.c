@@ -6,7 +6,7 @@ double T[4][TARGET_NUM] = {0};
 
 void generateCoordinates(Pose pose,double (* p)[4][TARGET_NUM])
 {
-  int i,j,k;
+  register int i,j,k;
   memset(R,0,sizeof(R));
   memset(T,0,sizeof(T));
   memset(p,0,sizeof(*p));

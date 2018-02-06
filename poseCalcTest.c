@@ -24,7 +24,7 @@ void evaluatePoseCalc(Pose start,Pose dev,Pose end,double sigma,unsigned int tes
     printf("case\tpitch\troll\tyaw\tX\tY\tZ\tpitch'\troll'\tyaw'\tX'\tY'\tZ'\n");
     printf("-----------------------------------------------------------------------------------------------------\n");
 #endif
-    int i=0,j,k;
+    register int i=0,j,k;
     void *poly = malloc(3);
     void *state = malloc(7);
     float vector[TARGET_NUM][2];
@@ -135,7 +135,7 @@ void evaluatePoseCalc(Pose start,Pose dev,Pose end,double sigma,unsigned int tes
 void poseCalcTest()
 {
     Pose testCase[3];
-    int i;
+    register int i;
 #ifdef PRINT_FILE
     pFile = fopen("C:\\Users\\Victo\\OneDrive\\Project\\MonoVision\\Data\\DSPEvaluate.txt","w");
     pBinary = fopen("C:\\Users\\Victo\\OneDrive\\Project\\MonoVision\\Data\\DSPEvaluate.bin","wb");
