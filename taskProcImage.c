@@ -1,7 +1,7 @@
 #include <MonoGlobal.h>
 #include <string.h>
 
-const char *status_string[4] = {"NORM","FEWTAR","NOTAR","NOLINE"};
+const char *status_string[4] = {"NORM","FEWTAR","NOTAR","NOLINE","ERROR"};
 Pose debug_pose;
 
 void taskProcImage()
@@ -35,7 +35,9 @@ void taskProcImage()
         goto emifSend;
 
         //Pose Calculation
-        poseCalc(&points,&pose);
+        status = poseCalc(&points,&pose);
+        if(status)
+        goto emifSend;
 
         //Send result
         emifSend:
@@ -52,8 +54,8 @@ void taskProcImage()
                 status_string[status]
                 );
 #endif
-        }
         if(!status)debug_pose = pose;
+        }
 #else
         poseCalcTest();
 #endif

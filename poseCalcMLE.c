@@ -46,9 +46,10 @@ void simon_h(double *p, double *hx, int m, int n,void *adata)
 
 }
 
-void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
+unsigned char poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
 {
   int i,j,k;
+  unsigned char status = 0;
   double H[3][3];
   double invM[3][3];
   double invMH[3][3] = {0};
@@ -69,6 +70,11 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   getHomographyMatrix_initialize();
   getHomographyMatrix(X,Y,H);
   dlevmar_dif(simon_h,H,NULL,9,2*TARGET_NUM,1000,NULL,info,NULL,NULL,A);
+  if(info[1] > POSE_CALC_METHOD_MLE_EPSILON)
+  {
+    status = 4;
+    goto end;
+  }
   DSPF_dp_mat_trans_local(H,3);
   DSPF_dp_mat_inv(M,3,invM);
   DSPF_dp_mat_mul_any(invM,1,3,3,H,3,invMH);
@@ -92,7 +98,8 @@ void poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   pose->R.roll  =  atan(invMH[1][0]/invMH[1][1])/PI*180;
   pose->R.pitch =  asin(invMH[1][2])/PI*180;
   pose->R.yaw   =  atan(invMH[0][2]/invMH[2][2])/PI*180;
-
+end:
+  return status;
 }
 
 
