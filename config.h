@@ -14,7 +14,7 @@
 #define IMG_WIDTH 864
 #define IMG_HEIGHT 864
 #define IMG_SIZE 746496
-#define IMG_THRES 50
+#define IMG_THRES 100
 
 #define IMG_BUFFER_SIZE 8
 
