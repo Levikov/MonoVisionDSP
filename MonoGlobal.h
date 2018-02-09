@@ -39,7 +39,9 @@ typedef struct
     double Z;
     double ratio;
     double area;
+    double brightness;
     double kalmanDist;
+    int ccId;
 }Circle;
 
 typedef struct
@@ -95,9 +97,15 @@ extern double debug_detection_rate;
 
 //===========Function Declaration=======//
 extern void taskProcImage();
+extern void segment(const unsigned char *image,
+                    unsigned char *restrict threshold,
+                    unsigned int  *restrict binary,
+                    const unsigned char thres_low,
+                    const unsigned char thres_high);
 extern void binarize(const unsigned char *p,unsigned int *q);
 extern void connectedComponent(unsigned int * binary, VLIB_CCHandle *ccHandle);
-extern unsigned char blob(VLIB_CCHandle *ccHandle,double (*points)[3][TARGET_NUM]);
+extern unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM],
+                          unsigned char *thres_low,unsigned char *thres_high);
 extern void generateCoordinates(Pose pose,double (*restrict p)[4][TARGET_NUM]);
 #ifdef POSE_CALC_TEST
 extern void poseCalcTest();

@@ -2,6 +2,10 @@
 #include <float.h>
 #include <matop.h>
 #include <motionPredict.h>
+
+#pragma DATA_ALIGN(ccMap,8)
+unsigned char ccMap[IMG_SIZE];
+
 void cmean(Circle *array,const int N,double *restrict mean)
 {
     double sum = 0,sumAera=0;
@@ -14,6 +18,7 @@ void cmean(Circle *array,const int N,double *restrict mean)
     mean[0] = sum/(double)N;
     mean[1] = sumAera/(double)N;
 }
+
 void cvar(Circle *array,const double *mean,const int N,double *restrict var)
 {
     double sum = 0,sumArea = 0;
@@ -98,7 +103,7 @@ void kalmanRank(Circle *circles,const int N,double *kalmanImageCenter)
 
 unsigned char getTargets(VLIB_CCHandle *ccHandle,Circle **circles,int *restrict N)
 {
-    register int i=0;
+    register int i=0,j;
     unsigned int size;
     int cnt;
     char status = 0;
@@ -108,12 +113,12 @@ unsigned char getTargets(VLIB_CCHandle *ccHandle,Circle **circles,int *restrict 
     VLIB_createBlobList(ccHandle,&(blob));
     VLIB_getblobIIBufSize(IMG_HEIGHT,blob.maxNumItervals,&size);
     unsigned char *pBuf = Memory_alloc(NULL,size,8,NULL);
-    unsigned char *pBufCCMap = Memory_alloc(NULL,IMG_SIZE,8,NULL);
-    VLIB_createCCMap8Bit(ccHandle,pBufCCMap,IMG_WIDTH,IMG_HEIGHT);
+    VLIB_createCCMap8Bit(ccHandle,ccMap,IMG_WIDTH,IMG_HEIGHT);
     unsigned int perimeter;
     int n = blob.numBlobs;
     *N = n;
     *circles = malloc(n*sizeof(Circle));
+    memset(*circles,0,n*sizeof(Circle));
     if(blob.numBlobs<TARGET_NUM)
     {
         status = 1;
@@ -124,17 +129,17 @@ unsigned char getTargets(VLIB_CCHandle *ccHandle,Circle **circles,int *restrict 
         VLIB_CC cc;
         VLIB_createBlobIntervalImg(ccHandle,(AVMii *)pBuf,&blob.blobList[i]);
         VLIB_getCCFeatures(ccHandle,&cc,i);
-        VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,(AVMii *)pBuf,pBufCCMap,&perimeter);
-        (*circles)[i].ratio =(double)(perimeter*perimeter)/cc.area;
-        (*circles)[i].X = (double)cc.xsum/cc.area;
-        (*circles)[i].Y = (double)cc.ysum/cc.area;
+        VLIB_calcBlobPerimeter(i+1,IMG_WIDTH,(AVMii *)pBuf,ccMap,&perimeter);
+        (*circles)[i].ratio =(double)(perimeter*perimeter)/blob.blobList[i].area;
+        (*circles)[i].X = (double)cc.xsum/blob.blobList[i].area;
+        (*circles)[i].Y = (double)cc.ysum/blob.blobList[i].area;
         (*circles)[i].Z = 1;
-        (*circles)[i].area = cc.area;
+        (*circles)[i].area = blob.blobList[i].area;
+        (*circles)[i].ccId = blob.blobList[i].ccmapColor;
     }
 
 end:
     Memory_free(NULL,pBuf,size);
-    Memory_free(NULL,pBufCCMap,IMG_SIZE);
     free(blob.blobList);
     return status;
 }
@@ -159,8 +164,6 @@ unsigned char selectTargets(Circle *circles,const int N)
     {
         qsort(circles,N,sizeof(Circle),&rankByRatio);
     }
-
-    
 
     double mean[2],var[2],maxvar;
     int maxvaridx;
@@ -274,10 +277,12 @@ end:
 
 
 
-unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM])
+unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_NUM],
+                   unsigned char *thres_low,unsigned char *thres_high)
 {
     Circle *circles;
-    int N;
+    register int N,i,j;
+    double sum=0,var=0;
     unsigned char status = ERROR_NORM;
     status = getTargets(ccHandle,&circles,&N);
     if(status)goto end;
@@ -285,6 +290,24 @@ unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_
     if(status)goto end;
     status = filterTargets(circles,points);
     if(status)goto end;
+    for(i=0;i<TARGET_NUM;i++)
+    {
+        for(j=0;j<IMG_SIZE;j++)
+        {
+            if(ccMap[j]==circles[i].ccId)
+            circles[i].brightness+=image[j];
+        }
+        circles[i].brightness = circles[i].brightness/circles[i].area;
+        sum+=circles[i].brightness;
+    }
+    sum = sum/TARGET_NUM;
+    for(i=0;i<TARGET_NUM;i++)
+    {
+        var+=(circles[i].brightness - sum)*(circles[i].brightness - sum);
+    }
+    var = sqrtdp(var/TARGET_NUM);
+    *thres_low = (sum - 3*var>IMG_THRES)?sum-3*var:IMG_THRES;
+    *thres_high =255;
 end:
     free(circles);
     return status;

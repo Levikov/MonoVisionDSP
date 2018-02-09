@@ -20,6 +20,8 @@ void taskProcImage()
         static unsigned char i=0;
         int sizeCC;
         char status;
+        static unsigned char thres_low = IMG_THRES;
+        static unsigned char thres_high = 255;
 
         if(*emifFlagAddr==1)
         {
@@ -27,17 +29,14 @@ void taskProcImage()
         // Copy debug image into buffer;
         recvEMIF(emifRecvAddr,image);
 
-        //Threshold
-        IMG_thr_le2min_8(image,threshold,IMG_WIDTH,IMG_HEIGHT,IMG_THRES);
-
-        //Binarize
-        VLIB_packMask32(threshold,binary,IMG_SIZE);
+        //Segment
+        segment(image,threshold,binary,thres_low,thres_high);
 
         //Connected component analysis
         connectedComponent(binary,&ccHandle);
 
         //Blob Analysis
-        status = blob(&ccHandle,&points);
+        status = blob(&ccHandle,&points,&thres_low,&thres_high);
         if(status)
         goto emifSend;
 
@@ -81,6 +80,11 @@ void taskProcImage()
         }
         else
         {
+                if(status == ERROR_FEWTAR || status == ERROR_NOTAR || status == ERROR_NOLINE)
+                {
+                        thres_low = IMG_THRES;
+                        thres_high = 255;
+                }
                 kalmanFlag = 0;
         }
         }
