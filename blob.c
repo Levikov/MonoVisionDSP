@@ -233,7 +233,6 @@ unsigned char filterTargets(Circle *circles,double (* restrict points)[3][TARGET
         }
     }
     if(flag)goto end;
-
     swap(circles,aux[i-1]);
     swap_pCircle(aux,aux+i-1);
     swap(circles+1,aux[j-1]);
@@ -292,10 +291,18 @@ unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_
     if(status)goto end;
     for(i=0;i<TARGET_NUM;i++)
     {
+        circles[i].X = 0;
+        circles[i].Y = 0;
         for(j=0;j<IMG_SIZE;j++)
         {
             if(ccMap[j]==circles[i].ccId)
-            circles[i].brightness+=image[j];
+            {
+                circles[i].brightness+=image[j];
+                circles[i].X+= (j%IMG_WIDTH+0.5)*image[j];
+                circles[i].Y+= (j/IMG_WIDTH+0.5)*image[j];
+            }
+            circles[i].X = circles[i].X/circles[i].brightness;
+            circles[i].Y = circles[i].Y/circles[i].brightness;
         }
         circles[i].brightness = circles[i].brightness/circles[i].area;
         sum+=circles[i].brightness;

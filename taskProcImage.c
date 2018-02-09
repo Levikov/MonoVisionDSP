@@ -64,6 +64,13 @@ void taskProcImage()
                 debug_detection_rate
                 );
 #endif
+#ifdef DEBUG_OUT
+        char fname[200];
+        sprintf(fname,"C:\\Users\\Victo\\OneDrive\\Project\\MonoVision\\Debug\\debug.bin");
+        FILE *fp = fopen(fname,"wb");
+        fwrite(points,sizeof(points),1,fp);
+        fclose(fp);
+#endif
         if(!status)
         {
                 poseLastCorrect = pose;

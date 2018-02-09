@@ -54,7 +54,7 @@ unsigned char poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   double invM[3][3];
   double invMH[3][3] = {0};
   double *A[2];
-  double opts[5] = {1e-6,1e-9,1e-9,1e-9,1e-6};
+  double opts[5] = {1e-6,1e-9,1e-12,1e-12,1e-9};
   A[0]  = &P;
   A[1]  = points;
   double info[LM_INFO_SZ];
@@ -71,11 +71,11 @@ unsigned char poseCalc(const double(* points)[3][TARGET_NUM],Pose *pose)
   getHomographyMatrix_initialize();
   getHomographyMatrix(X,Y,H);
   dlevmar_dif(simon_h,H,NULL,9,2*TARGET_NUM,1000,opts,info,NULL,NULL,A);
-  if(info[1] > POSE_CALC_METHOD_MLE_EPSILON)
-  {
-    status = 4;
-    goto end;
-  }
+  // if(info[1] > POSE_CALC_METHOD_MLE_EPSILON)
+  // {
+  //   status = 4;
+  //   goto end;
+  // }
   DSPF_dp_mat_trans_local(H,3);
   DSPF_dp_mat_inv(M,3,invM);
   DSPF_dp_mat_mul_any(invM,1,3,3,H,3,invMH);
