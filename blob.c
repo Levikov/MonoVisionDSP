@@ -134,6 +134,10 @@ unsigned char getTargets(VLIB_CCHandle *ccHandle,Circle **circles,int *restrict 
         (*circles)[i].X = (double)cc.xsum/blob.blobList[i].area;
         (*circles)[i].Y = (double)cc.ysum/blob.blobList[i].area;
         (*circles)[i].Z = 1;
+        (*circles)[i].xmin = cc.xmin;
+        (*circles)[i].ymin = cc.ymin;
+        (*circles)[i].xmax = cc.xmax;
+        (*circles)[i].ymax = cc.ymax;
         (*circles)[i].area = blob.blobList[i].area;
         (*circles)[i].ccId = blob.blobList[i].ccmapColor;
     }
@@ -280,7 +284,7 @@ unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_
                    unsigned char *thres_low,unsigned char *thres_high)
 {
     Circle *circles;
-    register int N,i,j;
+    register int N,i,j,k;
     double sum=0,var=0;
     unsigned char status = ERROR_NORM;
     status = getTargets(ccHandle,&circles,&N);
@@ -293,17 +297,18 @@ unsigned char blob(VLIB_CCHandle *ccHandle,double (* restrict points)[3][TARGET_
     {
         circles[i].X = 0;
         circles[i].Y = 0;
-        for(j=0;j<IMG_SIZE;j++)
+        for(j=circles[i].xmin;j<=circles[i].xmax;j++)
+        for(k=circles[i].ymin;k<=circles[i].ymax;k++)
         {
-            if(ccMap[j]==circles[i].ccId)
+            if(ccMap[k*IMG_WIDTH+j]==circles[i].ccId)
             {
-                circles[i].brightness+=image[j];
-                circles[i].X+= (j%IMG_WIDTH+0.5)*image[j];
-                circles[i].Y+= (j/IMG_WIDTH+0.5)*image[j];
+                circles[i].brightness+=image[k*IMG_WIDTH+j];
+                circles[i].X+= (j+0.5)*image[k*IMG_WIDTH+j];
+                circles[i].Y+= (k+0.5)*image[k*IMG_WIDTH+j];
             }
-            circles[i].X = circles[i].X/circles[i].brightness;
-            circles[i].Y = circles[i].Y/circles[i].brightness;
         }
+        circles[i].X = circles[i].X/circles[i].brightness;
+        circles[i].Y = circles[i].Y/circles[i].brightness;
         circles[i].brightness = circles[i].brightness/circles[i].area;
         sum+=circles[i].brightness;
     }

@@ -41,6 +41,10 @@ typedef struct
     double area;
     double brightness;
     double kalmanDist;
+    unsigned short xmin;
+    unsigned short ymin;
+    unsigned short xmax;
+    unsigned short ymax;
     int ccId;
 }Circle;
 
